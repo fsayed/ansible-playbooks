@@ -1,0 +1,41 @@
+---
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.113.1.62
+      prefix: 20
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.113.0.1
+      ipv6: yes
+
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22 }
+    - { proto: tcp, dport: 25 }
+    - { proto: tcp, dport: 53 }
+    - { proto: udp, dport: 53 }
+    - { proto: tcp, dport: 88 }
+    - { proto: udp, dport: 88 }
+    - { proto: udp, dport: 123 }
+    - { proto: tcp, dport: 389 }
+    - { proto: tcp, dport: 636 }
+    - { proto: tcp, dport: 754 }
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22 }
+    - { proto: tcp, dport: 25 }
+    - { proto: tcp, dport: 53 }
+    - { proto: udp, dport: 53 }
+    - { proto: tcp, dport: 88 }
+    - { proto: udp, dport: 88 }
+    - { proto: tcp, dport: 389 }
+    - { proto: tcp, dport: 636 }
+    - { proto: tcp, dport: 754 }
+
+
+rsync_dirs: "/var/named /usr/local/sbin /usr/local/data /etc /var/spool/cron /opt/log/rsyncs"

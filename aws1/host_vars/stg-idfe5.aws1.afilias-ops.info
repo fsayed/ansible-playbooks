@@ -1,0 +1,20 @@
+---
+interfaces:
+    - id: 0
+      ip: 10.113.192.31
+
+puppet2016_enabled: false
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22 }
+    - { proto: tcp, dport: 80 }
+    - { proto: tcp, dport: 443 }
+    - { proto: tcp, dport: 8089 }
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22 }
+    - { proto: tcp, dport: 80 }
+    - { proto: tcp, dport: 443 }
+    - { proto: tcp, dport: 8089 }

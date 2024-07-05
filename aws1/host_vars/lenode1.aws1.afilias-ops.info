@@ -1,0 +1,15 @@
+---
+interfaces:
+    - id: 0
+      ip: 10.113.1.14
+
+puppet2016_enabled: false
+
+iptables_enabled: yes
+iptables_rules:
+    - { src: "10.0.0.0/8", proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: 9200, comment: "Elasticsearch REST" }
+    - { proto: tcp, dport: 9300, comment: "Elasticsearch REST" }
+
+
+

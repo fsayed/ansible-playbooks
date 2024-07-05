@@ -1,0 +1,15 @@
+---
+interfaces:
+    - id: 0
+      ip: 10.113.1.34
+
+puppet2016_enabled: false
+
+iptables_enabled: yes
+iptables_rules:
+    - { src: "10.0.0.0/8", proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { src: "10.113.33.34", proto: tcp, dport: 8080, comment: "From splog4.aws1" }
+    - { src: "10.0.0.0/8", proto: tcp, dport: 9997, comment: "Splunk server" }
+
+
+

@@ -1,0 +1,14 @@
+interfaces:
+    - id: 0
+      ip: 10.113.161.24
+
+puppet2016_enabled: false
+
+sudo_specs:
+    - type: permission
+      user: '%opssupport'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+

@@ -1,0 +1,23 @@
+---
+members:
+    - atalan
+    - joro
+    - jyeum
+    - kborkako
+    - ksyed
+    - mweissha
+    - pdhawan
+    - slimba
+
+sudo_specs:
+    - type: permission
+      user: '%noc'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+cron_access_enabled: yes
+cron_users:
+    - root
+    - nocmon
+

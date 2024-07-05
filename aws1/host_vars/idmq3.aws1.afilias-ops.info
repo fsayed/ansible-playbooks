@@ -1,0 +1,32 @@
+---
+interfaces:
+    - id: 0
+      ip: 10.113.5.17
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: 1883, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 4369, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 5601, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 5603, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 5671, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 5672, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 8883, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 15672, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 25672, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 61613, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 61614, comment: "RabbitMQ" }
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: 1883, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 4369, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 5671, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 5672, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 8883, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 15672, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 25672, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 61613, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 61614, comment: "RabbitMQ" }

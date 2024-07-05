@@ -1,0 +1,34 @@
+---
+ntp_servers:
+   - 0.us.pool.ntp.org
+   - 1.us.pool.ntp.org
+   - 2.us.pool.ntp.org
+   - 3.us.pool.ntp.org
+   - time.windows.com
+
+# sudo
+default_sudo_specs:
+    - type: permission
+      user: '%syseng'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+    - type: permission
+      user: '%neteng'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+    - type: permission
+      user: '%opssupport'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+    - type: permission
+      user: '%noc'
+      host: ALL
+      runas: ALL
+      command: '/bin/su - nagios, /bin/su - zenmon, /bin/su - nocmon, /bin/su - splunk, /etc/init.d/nrpe restart, /etc/init.d/pandora_agent_daemon restart, /usr/bin/pandora_agent'
+

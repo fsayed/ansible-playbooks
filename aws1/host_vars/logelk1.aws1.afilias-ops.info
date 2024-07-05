@@ -1,0 +1,17 @@
+---
+interfaces:
+    - id: 0
+      ip: 10.113.2.14
+
+puppet2016_enabled: false
+
+iptables_enabled: yes
+iptables_rules:
+    - { src: "10.0.0.0/8", proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: 5040, comment: "logstash input" }
+    - { proto: tcp, dport: 5140, comment: "syslog input" }
+    - { proto: tcp, dport: 5601, comment: "kibana" }
+    - { proto: tcp, dport: 9000, comment: "graylog" }
+
+
+

@@ -1,0 +1,24 @@
+interfaces:
+    - id: 0
+      ip: 10.113.160.21
+
+puppet2016_enabled: false
+
+sudo_specs:
+    - type: permission
+      user: '%opssupport'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: 80, comment: "HTTP" }
+    - { proto: tcp, dport: 443, comment: "HTTPS" }
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: 80, comment: "HTTP" }
+    - { prott: tcp, dport: 443, comment: "HTTPS" }

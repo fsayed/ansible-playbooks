@@ -1,0 +1,10 @@
+interfaces:
+    - id: 0
+      ip: 10.113.33.27
+
+cron_users:
+    - root
+    - postgres
+    - mysql
+
+pv_disk: "/opt/rg"

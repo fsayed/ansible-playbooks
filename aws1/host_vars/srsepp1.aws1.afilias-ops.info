@@ -1,0 +1,5 @@
+interfaces:
+    - id: 0
+      ip: 10.113.4.25
+
+pv_disk: "/opt"

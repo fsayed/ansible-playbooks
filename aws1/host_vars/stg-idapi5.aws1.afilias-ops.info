@@ -1,0 +1,35 @@
+---
+interfaces:
+    - id: 0
+      ip: 10.113.193.31
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22 }
+    - { proto: tcp, dport: 8005 }
+    - { proto: tcp, dport: 8009 }
+    - { proto: tcp, dport: 8080 }
+    - { proto: tcp, dport: 8081 }
+    - { proto: tcp, dport: 8089 }
+    - { proto: tcp, dport: 18082 }
+    - { proto: tcp, dport: 28082 }
+    - { proto: tcp, dport: 29092 }
+    - { proto: tcp, dport: 35331 }
+    - { proto: tcp, dport: 80 }
+    - { proto: tcp, dport: 443 }
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22 }
+    - { proto: tcp, dport: 8005 }
+    - { proto: tcp, dport: 8009 }
+    - { proto: tcp, dport: 8080 }
+    - { proto: tcp, dport: 8081 }
+    - { proto: tcp, dport: 8089 }
+    - { proto: tcp, dport: 18082 }
+    - { proto: tcp, dport: 28082 }
+    - { proto: tcp, dport: 29092 }
+    - { proto: tcp, dport: 35331 }
+    - { proto: tcp, dport: 80 }
+    - { proto: tcp, dport: 443 }
+

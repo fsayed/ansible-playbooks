@@ -1,0 +1,16 @@
+---
+interfaces:
+    - id: 0
+      ip: 10.113.67.15
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22 }
+    - { proto: tcp, dport: "5425:5533" }
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22 }
+    - { proto: tcp, dport: "5425:5533" }
+
+

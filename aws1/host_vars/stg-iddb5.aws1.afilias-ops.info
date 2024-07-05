@@ -1,0 +1,18 @@
+interfaces:
+    - id: 0
+      ip: 10.113.255.31
+
+puppet2016_enabled: false
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: "5425:5533" }
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: "5425:5533" }
+
+
+pv_disk: "/dev/nvme1n1"

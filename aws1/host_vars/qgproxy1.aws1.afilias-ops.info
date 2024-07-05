@@ -1,0 +1,16 @@
+interfaces:
+    - id: 0
+      ip: 10.113.1.0.103
+
+puppet2016_enabled: false
+
+iptables_enabled: yes
+iptables_rules:
+    - { src: "10.0.0.0/8", proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: 31280, comment: "Squid Proxy Server" }
+
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: 31280, comment: "Squid Proxy Server" }

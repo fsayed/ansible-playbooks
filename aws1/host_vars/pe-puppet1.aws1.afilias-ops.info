@@ -1,0 +1,23 @@
+---
+interfaces:
+    - id: 0
+      ip: 10.113.1.77
+
+members:
+    - jpfletch
+    - rbigelow
+
+sudo_specs:
+    - type: permission
+      user: '%opssupport'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+    - type: permission
+      user: '%regops'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+

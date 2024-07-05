@@ -1,0 +1,20 @@
+---
+# product sudo
+product_sudo_specs:
+    - type: permission
+      user: '%reginterface_full'
+      host: ALL
+      runas: ALL
+      command: ALL
+    - type: permission
+      user: '%regops'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+
+product_members:
+    - akrot
+    - fkapadia
+    - ahuber
+    - yspielma
