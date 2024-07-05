@@ -1,0 +1,7 @@
+$FileCreateMode 0640
+
+{% if syslog[datacenter] is defined %}
+# Remote syslog (TCP)
+*.* @@{{ syslog[datacenter].server }}:{{ syslog[datacenter].port }}
+{% endif %}
+

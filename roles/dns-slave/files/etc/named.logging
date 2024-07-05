@@ -1,0 +1,58 @@
+logging {
+        channel "transfer_ch" {
+                file "/var/log/xfer-in.log" versions 10 size 10M;
+                print-time yes;
+                print-category yes;
+                severity debug;
+        };
+        category "xfer-in" { "transfer_ch"; default_syslog; };
+
+        channel "transfer-out_ch" {
+                file "/var/log/xfer-out.log" versions 10 size 10M;
+                print-time yes;
+                print-category yes;
+                severity debug;
+        };
+        category "xfer-out" { "transfer-out_ch"; default_syslog; };
+
+        channel "queries_ch" {
+                file "/var/log/queries.log" versions 10 size 10M;
+                print-time yes;
+                print-category yes;
+                severity debug;
+        };
+        category "queries" { "queries_ch"; };
+
+        channel "notify_ch" {
+                file "/var/log/notify.log" versions 10 size 10M;
+                print-time yes;
+                print-category yes;
+                severity debug;
+        };
+        category "notify" { "notify_ch"; default_syslog; };
+
+        channel "default_ch" {
+                file "/var/log/named.log" versions 10 size 10M;
+                severity info;
+                print-time yes;
+                print-severity yes; print-category yes;
+        };
+        category "default" { "default_ch"; default_syslog; };
+
+        channel "security_ch" {
+                file "/var/log/security.log" versions 10 size 10M;
+                severity info;
+                print-time yes;
+                print-severity yes;
+                print-category yes;
+        };
+        category "security" { "security_ch"; default_syslog; };
+
+        channel "null" {
+                null;
+        };
+        category lame-servers { null; } ;
+
+        category "unmatched" { default_syslog; };
+};
+

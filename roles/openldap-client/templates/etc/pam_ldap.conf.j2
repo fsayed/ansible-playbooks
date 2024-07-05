@@ -1,0 +1,20 @@
+base    {{ ldap_basedn }}
+uri     {{ ldap_uris|join(' ') }}
+ldap_version 	3
+ssl		start_tls
+
+bind_timelimit	120
+timelimit 	120
+idle_timelimit	3600
+nss_initgroups_ignoreusers root,ldap,named,avahi,haldaemon,dbus,radvd,tomcat,radiusd,news,mailman,nscd,gdm,localadm
+nss_reconnect_tries 2
+
+tls_cacertfile	/etc/openldap/certs/cacert.crt
+pam_password	md5
+pam_groupdn	cn={{ inventory_hostname }},dc={{ datacenter }},{{ ldap_hostaccessdn }}
+pam_member_attribute	member
+
+nss_base_passwd	{{ ldap_user_dn }}
+nss_base_shadow	{{ ldap_user_dn }}
+nss_base_group	{{ ldap_group_dn }}
+

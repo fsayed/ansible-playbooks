@@ -1,0 +1,95 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 12083005787249891424 (0xa7af75beb804d860)
+    Signature Algorithm: sha1WithRSAEncryption
+        Issuer: C=CN, ST=CN, L=Beijing, O=Aliregistry.net, OU=spacewalk1.cn1.afilias-ops.info, CN=spacewalk1.cn1.afilias-ops.info
+        Validity
+            Not Before: Aug 19 12:40:07 2015 GMT
+            Not After : Aug 13 12:40:07 2036 GMT
+        Subject: C=CN, ST=CN, L=Beijing, O=Aliregistry.net, OU=spacewalk1.cn1.afilias-ops.info, CN=spacewalk1.cn1.afilias-ops.info
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:bf:93:63:d9:d4:d5:9c:a7:17:45:4a:a9:8d:71:
+                    f3:c4:0b:db:f9:32:df:e0:17:a7:e3:b5:35:dc:05:
+                    ea:a7:1d:c7:13:d5:4a:cd:ef:4a:19:06:f2:7a:9c:
+                    cc:bc:5d:e2:6d:13:f4:66:eb:63:c4:fd:a5:f0:30:
+                    48:3b:90:b0:59:60:23:8f:66:77:94:36:a6:84:fa:
+                    42:64:c0:06:12:8f:6b:ca:0b:ee:13:40:af:8b:e1:
+                    0c:06:ef:6b:8c:1b:6f:c1:12:93:a6:71:ec:ce:6c:
+                    25:01:50:54:09:c3:02:fa:9f:32:43:eb:0c:70:ab:
+                    78:21:23:02:14:3d:99:dc:7b:13:67:e7:32:24:01:
+                    69:bf:b0:39:fd:3a:7e:b5:49:aa:31:c4:92:e0:b4:
+                    a4:89:7b:f7:6d:87:50:10:7c:56:08:ef:96:89:73:
+                    04:e6:8c:d4:a9:07:67:b8:49:61:9c:75:1e:27:e0:
+                    f6:27:c8:6b:d1:c8:08:2b:ae:5a:11:1d:58:00:e4:
+                    e9:7b:36:70:f4:55:ee:c2:f7:03:04:73:79:a6:1b:
+                    88:4a:61:49:a7:bf:36:88:f5:9b:50:e1:0e:cd:86:
+                    fc:03:c7:45:04:66:28:8c:99:76:c7:74:11:3e:1a:
+                    7a:81:75:9c:a3:03:ab:8a:1f:f3:ad:83:5c:90:96:
+                    06:e1
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:TRUE
+            X509v3 Key Usage: 
+                Digital Signature, Key Encipherment, Certificate Sign
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication, TLS Web Client Authentication
+            Netscape Comment: 
+                RHN SSL Tool Generated Certificate
+            X509v3 Subject Key Identifier: 
+                5E:38:02:E9:0D:20:E0:7B:74:F4:83:46:4C:FF:10:68:D8:C7:14:79
+            X509v3 Authority Key Identifier: 
+                keyid:5E:38:02:E9:0D:20:E0:7B:74:F4:83:46:4C:FF:10:68:D8:C7:14:79
+                DirName:/C=CN/ST=CN/L=Beijing/O=Aliregistry.net/OU=spacewalk1.cn1.afilias-ops.info/CN=spacewalk1.cn1.afilias-ops.info
+                serial:A7:AF:75:BE:B8:04:D8:60
+
+    Signature Algorithm: sha1WithRSAEncryption
+         04:6b:68:1e:5b:1e:25:78:36:c0:fc:e0:3d:b5:fb:86:26:88:
+         c4:65:0d:02:46:60:fd:94:a6:c7:f9:f0:ce:e9:3e:be:4c:1a:
+         9c:08:7b:7c:5f:db:00:64:a0:c5:ac:ea:25:35:9c:ad:4c:4e:
+         77:77:f2:3d:da:80:62:d2:2f:5d:31:f5:fb:69:70:73:fc:ee:
+         46:e1:63:99:4d:8b:20:72:8d:94:7b:69:e1:64:b2:ec:6a:8a:
+         35:de:d8:c0:99:e1:8c:8c:79:af:06:e3:16:70:8d:8a:fd:16:
+         2d:31:08:4b:0e:3e:a5:da:b5:c2:f7:73:7a:80:47:0f:45:47:
+         46:03:c9:6c:a0:9b:43:ab:81:85:f0:b1:dc:8f:13:c6:88:9c:
+         d9:82:a8:31:dd:c7:f0:57:28:7f:d5:15:76:70:08:84:cd:22:
+         56:d3:02:fc:af:6f:85:88:68:4a:6e:38:b0:7b:9b:f0:75:88:
+         c2:40:f9:54:05:b2:fc:d5:2e:7d:77:a7:55:95:37:d6:39:73:
+         14:17:bf:18:b6:bf:a8:75:74:ae:e5:12:3e:b3:ff:7c:28:e5:
+         db:20:97:a8:55:8e:e7:88:42:1d:e7:29:7d:65:da:4e:1c:3f:
+         b4:59:b1:ad:3c:fd:29:a8:e1:fc:fc:80:5c:97:71:8b:38:12:
+         94:9c:16:7d
+-----BEGIN CERTIFICATE-----
+MIIFHTCCBAWgAwIBAgIJAKevdb64BNhgMA0GCSqGSIb3DQEBBQUAMIGaMQswCQYD
+VQQGEwJDTjELMAkGA1UECBMCQ04xEDAOBgNVBAcTB0JlaWppbmcxGDAWBgNVBAoT
+D0FsaXJlZ2lzdHJ5Lm5ldDEoMCYGA1UECxMfc3BhY2V3YWxrMS5jbjEuYWZpbGlh
+cy1vcHMuaW5mbzEoMCYGA1UEAxMfc3BhY2V3YWxrMS5jbjEuYWZpbGlhcy1vcHMu
+aW5mbzAeFw0xNTA4MTkxMjQwMDdaFw0zNjA4MTMxMjQwMDdaMIGaMQswCQYDVQQG
+EwJDTjELMAkGA1UECBMCQ04xEDAOBgNVBAcTB0JlaWppbmcxGDAWBgNVBAoTD0Fs
+aXJlZ2lzdHJ5Lm5ldDEoMCYGA1UECxMfc3BhY2V3YWxrMS5jbjEuYWZpbGlhcy1v
+cHMuaW5mbzEoMCYGA1UEAxMfc3BhY2V3YWxrMS5jbjEuYWZpbGlhcy1vcHMuaW5m
+bzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAL+TY9nU1ZynF0VKqY1x
+88QL2/ky3+AXp+O1NdwF6qcdxxPVSs3vShkG8nqczLxd4m0T9GbrY8T9pfAwSDuQ
+sFlgI49md5Q2poT6QmTABhKPa8oL7hNAr4vhDAbva4wbb8ESk6Zx7M5sJQFQVAnD
+AvqfMkPrDHCreCEjAhQ9mdx7E2fnMiQBab+wOf06frVJqjHEkuC0pIl7922HUBB8
+VgjvlolzBOaM1KkHZ7hJYZx1Hifg9ifIa9HICCuuWhEdWADk6Xs2cPRV7sL3AwRz
+eaYbiEphSae/Noj1m1DhDs2G/APHRQRmKIyZdsd0ET4aeoF1nKMDq4of862DXJCW
+BuECAwEAAaOCAWIwggFeMAwGA1UdEwQFMAMBAf8wCwYDVR0PBAQDAgKkMB0GA1Ud
+JQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAxBglghkgBhvhCAQ0EJBYiUkhOIFNT
+TCBUb29sIEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTAdBgNVHQ4EFgQUXjgC6Q0g4Ht0
+9INGTP8QaNjHFHkwgc8GA1UdIwSBxzCBxIAUXjgC6Q0g4Ht09INGTP8QaNjHFHmh
+gaCkgZ0wgZoxCzAJBgNVBAYTAkNOMQswCQYDVQQIEwJDTjEQMA4GA1UEBxMHQmVp
+amluZzEYMBYGA1UEChMPQWxpcmVnaXN0cnkubmV0MSgwJgYDVQQLEx9zcGFjZXdh
+bGsxLmNuMS5hZmlsaWFzLW9wcy5pbmZvMSgwJgYDVQQDEx9zcGFjZXdhbGsxLmNu
+MS5hZmlsaWFzLW9wcy5pbmZvggkAp691vrgE2GAwDQYJKoZIhvcNAQEFBQADggEB
+AARraB5bHiV4NsD84D21+4YmiMRlDQJGYP2Upsf58M7pPr5MGpwIe3xf2wBkoMWs
+6iU1nK1MTnd38j3agGLSL10x9ftpcHP87kbhY5lNiyByjZR7aeFksuxqijXe2MCZ
+4YyMea8G4xZwjYr9Fi0xCEsOPqXatcL3c3qARw9FR0YDyWygm0OrgYXwsdyPE8aI
+nNmCqDHdx/BXKH/VFXZwCITNIlbTAvyvb4WIaEpuOLB7m/B1iMJA+VQFsvzVLn13
+p1WVN9Y5cxQXvxi2v6h1dK7lEj6z/3wo5dsgl6hVjueIQh3nKX1l2k4cP7RZsa08
+/Smo4fz8gFyXcYs4EpScFn0=
+-----END CERTIFICATE-----

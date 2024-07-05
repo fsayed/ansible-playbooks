@@ -1,0 +1,14 @@
+// named.auto.zones:
+
+{% if dns_slave_zones is not defined %}
+{% set dns_slave_zones = zones.stdout_lines %}
+{% endif %}
+{% for zone in dns_slave_zones %}
+zone "{{ zone }}" {
+	type slave;
+	masters { internal; };
+	file "slaves/{{ zone }}";
+};
+
+{% endfor %}
+

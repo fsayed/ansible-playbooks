@@ -1,0 +1,46 @@
+- name: Install and configure rsyslog/remote loggin
+  block:
+      - name: Ensure rsyslog is installed
+        package: name={{ item }} state=present
+        with_items:
+            - rsyslog
+            - rsyslog-gnutls
+            - policycoreutils-python
+
+      - name: Create rsyslog spool directory
+        file: path=/var/spool/rsyslog state=directory owner=root group=root mode=0755
+        notify: restart rsyslog
+
+      - name: Copy rsyslog CA certificate file
+        copy: src={{ syslog_ca_file }} dest=/etc/pki/tls/certs/rsyslog-ca.crt owner=root group=root mode=0644
+        notify: restart rsyslog
+
+      - name: Set default log file permissions and remote syslog
+        template: src=etc/rsyslog.d/hardening.conf.j2 dest=/etc/rsyslog.d/hardening.conf owner=root group=root mode=0640
+        notify: restart rsyslog
+
+      - name: Ensure rsyslog is started and enabled
+        service: name=rsyslog state=started enabled=yes
+
+      - name: Check SELinux state
+        command: getenforce
+        changed_when: no
+        register: semode
+
+      - name: Make sure SELinux will not prevent rsyslog to send out logs to remote server
+        seport:
+            ports: "{{ syslog[datacenter].port }}"
+            proto: tcp
+            setype: syslogd_port_t
+            state: present
+        notify: restart rsyslog
+        ignore_errors: "{{ ansible_check_mode }}"
+        when: semode.stdout != 'Disabled'
+
+      - debug: msg='YOU NEED TO RE-RUN THIS TASK AGAIN IF YOU HAVE SELINUX ENABLED'
+        ignore_errors: "{{ ansible_check_mode }}"
+        when: semode.stdout == 'Disabled'
+
+  when: ansible_os_family == 'RedHat' and syslog[datacenter] is defined
+  tags: ['cis', 'hardening', 'security', 'syslog', 'rsyslog','log']
+  

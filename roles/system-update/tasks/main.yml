@@ -1,0 +1,5 @@
+---
+- name: Upgrade all packages to latest available
+  yum: name='*' state=latest
+  tags: ['system-update', 'yum-update', 'update']
+

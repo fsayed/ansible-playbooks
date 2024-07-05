@@ -1,0 +1,26 @@
+---
+- block:
+
+  - name: Install ipset packages
+    package: name={{ item }} state=present
+    with_items:
+        - ipset
+        - ipset-service
+
+  - name: Enable save-on-stop feature
+    lineinfile:
+      path: /etc/sysconfig/ipset-config
+      regexp: "^IPSET_SAVE_ON_STOP"
+      line: 'IPSET_SAVE_ON_STOP="yes"'
+
+  - name: Start and enable ipset service
+    service: name=ipset state=started enabled=yes
+
+  - name: Create defined ipsets
+    command: /sbin/ipset -exist create {{ item.name }} {{ item.type }} family {{ item.inet_family }}
+    with_items: "{{ ipset_set }}"
+
+  - name: Save ipsets
+    command: /usr/libexec/ipset/ipset.start-stop save
+
+  tags: ['ipset','fttpull']

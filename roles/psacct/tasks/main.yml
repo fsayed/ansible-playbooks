@@ -1,0 +1,8 @@
+- name: Install Linux process accounting
+  package: name=psacct state=present
+  tags: ['psacct']
+
+- name: Enable Linux process accounting
+  service: name=psacct state=started enabled=yes
+  tags: ['psacct']
+

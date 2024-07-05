@@ -1,0 +1,4 @@
+- name: Disable unused kernel modules
+  copy: src=etc/modprobe.d/CIS.conf dest=/etc/modprobe.d/CIS.conf owner=root group=root mode=0644
+  tags: ['cis', 'hardening', 'security', 'kmod']
+

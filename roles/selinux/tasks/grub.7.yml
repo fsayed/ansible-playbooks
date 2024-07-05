@@ -1,0 +1,16 @@
+- name: Check if SELinux is disabled in grub
+  shell: grep '^GRUB_CMDLINE_LINUX=' /etc/default/grub | grep -E 'selinux=0|enforcing=0' | wc -l
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 7
+  register: kernels
+  changed_when: no
+  failed_when: no
+  tags: ['selinux', 'hardening', 'security', 'grub', 'grub2']
+
+- name: Make sure SELinux is not disabled at boot
+  shell: sed -i -e '/^GRUB_CMDLINE_LINUX=/ s/selinux=0//g' -e '/^GRUB_CMDLINE_LINUX=/ s/enforcing=0//g' /etc/default/grub
+  ignore_errors: "{{ ansible_check_mode }}"
+  when: (ansible_os_family == 'RedHat') and (ansible_distribution_major_version|int >= 7) and (kernels.stdout|int > 0)
+  changed_when: kernels.stdout|int > 0
+  notify: generate grub2 config
+  tags: ['selinux', 'hardening', 'security', 'grub', 'grub2']
+  

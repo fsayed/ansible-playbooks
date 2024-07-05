@@ -1,0 +1,21 @@
+- name: Check if prelink is installed
+  shell: rpm -q prelink
+  args:
+      warn: no
+  failed_when: no
+  changed_when: no
+  register: rpm
+  when: ansible_os_family == 'RedHat'
+  tags: ['cis', 'hardening', 'security', 'prelink']
+
+- name: Disable prelink
+  command: prelink -ua
+  ignore_errors: "{{ ansible_check_mode }}"
+  when: ansible_os_family == 'RedHat' and rpm.rc == 0
+  tags: ['cis', 'hardening', 'security', 'prelink']
+
+- name: Remove prelink
+  package: name=prelink state=absent
+  ignore_errors: "{{ ansible_check_mode }}"
+  when: ansible_os_family == 'RedHat' and rpm.rc == 0
+  tags: ['cis', 'hardening', 'security', 'prelink']

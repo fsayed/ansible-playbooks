@@ -1,0 +1,46 @@
+[sssd]
+config_file_version = 2
+services = nss, pam
+domains = LOCAL, LDAP
+
+[nss]
+filter_groups = root
+filter_users = root
+reconnection_retries = 3
+entry_cache_timeout = 300
+entry_cache_nowait_percentage = 75
+
+[pam]
+reconnection_retries = 3
+offline_credentials_expiration = 2
+offline_failed_login_attempts = 3
+offline_failed_login_delay = 5
+
+[domain/LOCAL]
+id_provider = local
+auth_provider = local
+access_provider = permit
+
+[domain/LDAP]
+id_provider = ldap
+auth_provider = krb5
+chpass_provider = krb5
+access_provider = ldap
+ldap_id_use_start_tls = true
+ldap_access_filter = memberOf=cn={{ inventory_hostname }},ou={{ datacenter }},{{ ldap_hostaccessdn }}
+ldap_uri = {{ ldap_uris|join(',') }}
+ldap_schema = rfc2307bis
+ldap_search_base = {{ ldap_basedn }}
+ldap_tls_reqcert = never
+ldap_tls_cacert = /etc/openldap/certs/cacert.crt
+cache_credentials = true
+enumerate = true
+
+krb5_server = {{ krb5_kdcs|join(',') }}
+krb5_realm = {{ krb5_realm }}
+krb5_kpasswd = {{ krb5_admin_server }}
+krb5_auth_timeout = 15
+krb5_lifetime = 1h
+krb5_renewable_lifetime = 1d
+krb5_renew_interval = 60s
+

@@ -1,0 +1,3 @@
+- name: restart ip6tables
+  service: name=ip6tables state=restarted
+

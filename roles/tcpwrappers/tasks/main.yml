@@ -1,0 +1,12 @@
+- name: Install tcpwrappers
+  package: name=tcp_wrappers state=present
+  tags: ['tcpwrapper', 'tcpwrappers']
+
+- name: Create /etc/hosts.allow
+  template: src=etc/hosts.allow.j2 dest=/etc/hosts.allow owner=root group=root mode=0644
+  tags: ['tcpwrapper', 'tcpwrappers']
+
+- name: Create /etc/hosts.deny
+  template: src=etc/hosts.deny.j2 dest=/etc/hosts.deny owner=root group=root mode=0644
+  tags: ['tcpwrapper', 'tcpwrappers']
+

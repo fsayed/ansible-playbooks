@@ -1,0 +1,17 @@
+---
+- name: Create postgres group
+  group: name=postgres gid=9998 state=present
+
+- name: Create /opt/home
+  file: path=/opt/home owner=root group=root mode=0755 state=directory
+
+- name: Create postgres user
+  user: >
+      name=postgres
+      uid=9998
+      shell=/bin/bash
+      group=postgres
+      createhome=yes
+      home=/opt/home/postgres
+      state=present 
+

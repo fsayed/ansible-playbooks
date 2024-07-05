@@ -1,0 +1,19 @@
+# FIXME: It seemed we can't remount /tmp.
+# Remove /tmp for now, reboot is needed
+# Ignored errors.
+- name: remount filesystems
+  shell: > 
+      grep {{ item.fs }} /etc/fstab > /dev/null 2>&1 && 
+      mount -o remount,{{ item.opts }} {{ item.fs }}  
+  failed_when: no
+  with_items: "{{ filesystems }}"
+
+- name: apply sysctl settings
+  command: sysctl -p "{{ sysctl_file }}"
+  failed_when: no
+
+- name: restart postfix
+  service: name=postfix state=restarted
+
+- name: restart rsyslog
+  service: name=rsyslog state=restarted

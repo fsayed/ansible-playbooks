@@ -1,0 +1,20 @@
+---
+- name: Install net-snmp
+  yum: name=net-snmp state=present update_cache=yes
+  when: ansible_os_family == 'RedHat'
+  tags: ['snmp', 'net-snmp']
+
+- name: Configure snmpd startup optons
+  copy: src=etc/sysconfig/snmpd dest=/etc/sysconfig/snmpd owner=root group=root mode=0644
+  notify: restart snmpd
+  tags: ['snmp', 'net-snmp']
+
+- name: Configure snmpd
+  template: src=etc/snmp/snmpd.conf.j2 dest=/etc/snmp/snmpd.conf owner=root group=root mode=0600
+  notify: restart snmpd
+  tags: ['snmp', 'net-snmp']
+
+- name: Start snmpd
+  service: name=snmpd state=started enabled=yes
+  tags: ['snmp', 'net-snmp']
+

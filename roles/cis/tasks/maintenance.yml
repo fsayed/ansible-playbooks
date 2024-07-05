@@ -1,0 +1,42 @@
+- name: Ensure permissions on /etc/passwd are configured
+  file: path=/etc/passwd owner=root group=root mode=0644
+  tags: ['cis', 'hardening', 'security', 'maintenance']
+
+- name: Ensure permissions on /etc/shadow are configured
+  file: path=/etc/shadow owner=root group=root mode=0000
+  tags: ['cis', 'hardening', 'security', 'maintenance']
+
+- name: Ensure permissions on /etc/group are configured
+  file: path=/etc/group owner=root group=root mode=0644
+  tags: ['cis', 'hardening', 'security', 'maintenance']
+
+- name: Ensure permissions on /etc/gshadow are configured
+  file: path=/etc/gshadow owner=root group=root mode=0000
+  tags: ['cis', 'hardening', 'security', 'maintenance']
+
+- name: Ensure permissions on /etc/passwd- are configured
+  file: path=/etc/passwd- owner=root group=root mode=0600
+  tags: ['cis', 'hardening', 'security', 'maintenance']
+
+- name: Ensure permissions on /etc/shadow- are configured
+  file: path=/etc/shadow- owner=root group=root mode=0000
+  tags: ['cis', 'hardening', 'security', 'maintenance']
+
+- name: Ensure permissions on /etc/group- are configured
+  file: path=/etc/group- owner=root group=root mode=0600
+  tags: ['cis', 'hardening', 'security', 'maintenance']
+
+- name: Ensure permissions on /etc/gshadow- are configured
+  file: path=/etc/gshadow- owner=root group=root mode=0000
+  tags: ['cis', 'hardening', 'security', 'maintenance']
+
+- name: Ensure permissions of log files in /var/log are secure
+  copy:
+      content: |
+          #!/bin/bash
+          find /var/log -type f -exec chmod g-wx,o-rwx {} +
+      dest: /etc/cron.hourly/logfiles
+      owner: root
+      group: root
+      mode: 0700
+  tags: ['cis', 'hardening', 'security', 'maintenance']

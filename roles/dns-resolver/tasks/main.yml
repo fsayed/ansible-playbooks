@@ -1,0 +1,9 @@
+- name: Configure /etc/resolv.conf
+  template: src=etc/resolv.conf.j2 dest=/etc/resolv.conf
+  tags: ['hosts', 'dns', 'resolver', 'dns-resolver']
+
+- name: Configure /etc/hosts
+  template: src=etc/hosts.j2 dest=/etc/hosts
+  when: etc_hosts is defined
+  tags: ['hosts', 'dns', 'resolver', 'dns-resolver']
+

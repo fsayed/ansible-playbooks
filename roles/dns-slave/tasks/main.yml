@@ -1,0 +1,107 @@
+- name: Check if SELinux is enabled
+  command: getenforce
+  changed_when: no
+  register: semode
+  check_mode: yes
+  tags: ['dns-slave', 'dns', 'bind', 'named']
+
+- name: Install SELinux supported tools if it is enabled
+  package: name={{ item }} state=present
+  with_items:
+      - libselinux-python
+      - policycoreutils-python
+  when: semode.stdout != "Disabled"
+  tags: ['dns-slave', 'dns', 'bind', 'named']
+
+- name: Install bind and bind utilities
+  package: name={{ item }} state=present
+  with_items:
+      - bind-chroot
+      - bind-utils
+  tags: ['dns-slave', 'dns', 'bind', 'named']
+
+- name: Set SELinux policy for named chroot files/directories (may take a long time, please wait...)
+  sefcontext: target={{ item.target }} setype={{ item.setype }} ftype={{ item.ftype }} state=present
+  with_items:
+      - { target: '/var/named/chroot/var/log/.*', setype: 'named_log_t', ftype: 'f' }
+  when: semode.stdout != "Disabled"
+  register: sepolicy
+  notify:
+      - restart named
+      - restorecon
+  tags: ['dns-slave', 'dns', 'bind', 'named']
+
+- name: Create DNS data directories
+  file: path={{ item }} state=directory owner=named group=named mode=0750
+  with_items:
+      - /var/named/chroot/var/named/data
+      - /var/named/chroot/var/named/slaves
+      - /var/named/chroot/var/named/dynamic
+  notify:
+      - restart named
+      - restorecon
+  tags: ['dns-slave', 'dns', 'bind', 'named']
+
+- name: Copy named files to chroot directory
+  copy: remote_src=yes src={{ item.src }} dest={{ item.dest }} owner=root group=named mode={{ item.mode }}
+  with_items:
+      - { src: "/etc/named.iscdlv.key", dest: "/var/named/chroot/etc/", mode: "0644" }
+      - { src: "/etc/named.rfc1912.zones", dest: "/var/named/chroot/etc/", mode: "0640" }
+      - { src: "/etc/named.root.key", dest: "/var/named/chroot/etc/", mode: "0644" }
+      - { src: "/var/named/named.ca", dest: "/var/named/chroot/var/named/", mode: "0640" }
+      - { src: "/var/named/named.empty", dest: "/var/named/chroot/var/named/", mode: "0640" }
+      - { src: "/var/named/named.localhost", dest: "/var/named/chroot/var/named/", mode: "0640" }
+      - { src: "/var/named/named.loopback", dest: "/var/named/chroot/var/named/", mode: "0640" }
+  notify:
+      - restart named
+      - restorecon
+  tags: ['dns-slave', 'dns', 'bind', 'named']
+
+- name: Configure keys and named logging
+  copy: src={{ item.src }} dest={{ item.dest }} owner=root group=named mode=0640
+  with_items:
+      - { src: "etc/named.logging", dest: "/var/named/chroot/etc/named.logging" }
+      - { src: "etc/rndc.key", dest: "/var/named/chroot/etc/rndc.key" }
+      - { src: "etc/rndc.key", dest: "/etc/rndc.key" }
+      - { src: "etc/named.keys", dest: "/var/named/chroot/etc/named.keys" }
+  notify:
+      - restart named
+      - restorecon
+  tags: ['dns-slave', 'dns', 'bind', 'named']
+
+- name: Query zones to replicate from Bluecat
+  local_action: shell scripts/bluecat/list_zone
+  changed_when: no
+  become: no
+  register: zones
+  when: dns_slave_zones is not defined
+  tags: ['dns-slave', 'dns', 'bind', 'named']
+
+- name: Create named config for zones from Bluecat
+  template: src=etc/named.auto.zones.j2 dest=/var/named/chroot/etc/named.auto.zones owner=root group=named mode=0640
+  notify:
+      - restart named
+      - restorecon
+  tags: ['dns-slave', 'dns', 'bind', 'named']
+
+- name: Create main named config 
+  template: src=etc/named.conf.j2 dest=/var/named/chroot/etc/named.conf owner=root group=named mode=0640
+  notify:
+      - restart named
+      - restorecon
+  tags: ['dns-slave', 'dns', 'bind', 'named']
+
+- name: Prevent normal named service from being started (We are using named-chroot)
+  systemd: name=named enabled=no masked=yes
+  when: ansible_distribution_major_version|int >= 7
+  tags: ['dns-slave', 'dns', 'bind', 'named']
+
+- name: Make sure named files/directories have proper SELinux labeling
+  command: restorecon -R -v /var/named/chroot/
+  when: (semode.stdout != "Disabled") and sepolicy.changed
+  tags: ['dns-slave', 'dns', 'bind', 'named']
+
+- name: Start and enable named
+  service: name="{{ 'named-chroot' if (ansible_distribution_major_version|int >= 7) else 'named' }}" state=started enabled=yes
+  tags: ['dns-slave', 'dns', 'bind', 'named']
+

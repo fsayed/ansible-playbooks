@@ -1,0 +1,16 @@
+- name: Check if {{ client.name }} is installed
+  shell: rpm -q {{ client.package }}
+  args:
+      warn: no
+  failed_when: no
+  changed_when: no
+  register: rpm_installed
+  when: ansible_os_family == 'RedHat'
+  tags: ['cis', 'hardening', 'security', 'services']
+
+- name: Ensure {{ client.name }} client is not installed
+  package: name={{ client.package }} state=absent
+  when: (ansible_os_family == 'RedHat') and (rpm_installed.rc == 0)
+  ignore_errors: "{{ ansible_check_mode }}"
+  tags: ['cis', 'hardening', 'security', 'services']
+

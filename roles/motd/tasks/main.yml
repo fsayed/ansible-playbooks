@@ -1,0 +1,4 @@
+- name: Setup /etc/motd (Message Of The Day)
+  template: src=etc/motd.j2 dest=/etc/motd owner=root group=root mode=0644
+  tags: motd
+

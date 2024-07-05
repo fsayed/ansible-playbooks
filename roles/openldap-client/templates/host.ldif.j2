@@ -1,0 +1,68 @@
+{% if datacenter not in ('cn1','cn2','lab','ay1') %}
+dn: cn={{ inventory_hostname }},dc={{ datacenter }},{{ ldap_hostaccessdn }}
+    {% if not ldap_entry_found|bool %}
+changetype: add
+afiliasenv: {{ puppet_afiliasenv }}
+{% if datacenter in ('donuts','aws1','aws2','au2','usw1') %}
+arecord: {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}
+dhcpstatements: fixed-address {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}
+iphostnumber: {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}
+{% else %}
+arecord: {{ interfaces[0].ip }}
+dhcpstatements: fixed-address {{ interfaces[0].ip }}
+iphostnumber: {{ interfaces[0].ip }}
+{% endif %}
+associateddomain: {{ inventory_hostname }}
+cn: {{ inventory_hostname }}
+        {% if datacenter == 'tor' %}
+datacenter: 4141
+        {% else %}
+datacenter : {{ datacenter }}
+        {% endif %}
+dc: {{ inventory_hostname }}
+description: {{ inventory_hostname }}
+dhcpoption: host-name "{{ inventory_hostname }}"
+environment: {{ puppet_environment }}
+objectclass: afiliasHost
+objectclass: ipHost
+objectclass: ieee802Device
+objectclass: puppetClient
+objectclass: dhcpHost
+objectclass: top
+parentnode: {{ puppet_parent_node }}
+        {% if ldap_role is defined %}
+            {% for item in ldap_role %}
+role: {{ item }}
+            {% endfor %}
+        {% endif %}
+vlan: {{ puppet_vlan }}
+    {% else %}
+changetype: modify
+replace: arecord
+arecord: {{ interfaces[0].ip }}
+-
+replace: dhcpstatements
+dhcpstatements: fixed-address {{ interfaces[0].ip }}
+-
+replace: iphostnumber
+iphostnumber: {{ interfaces[0].ip }}
+    {% endif %}
+{% else %}
+dn: cn={{ inventory_hostname }},ou={{ datacenter }},{{ ldap_hostaccessdn }}
+    {% if not ldap_entry_found|bool %}
+cn: {{ inventory_hostname }}
+objectclass: groupOfNames
+    {% endif %}
+{% endif %}
+{% if not ldap_entry_found|bool %}
+    {% set all_members = default_members %}
+    {% if members is defined %}
+        {% set all_members = all_members | union(members) %}
+    {% endif %}
+    {% if product_members is defined %}
+        {% set all_members = all_members | union(product_members) %}
+    {% endif %}
+    {% for member in all_members %}
+member: uid={{ member }},{{ ldap_user_dn }}
+    {% endfor %}
+{% endif %}

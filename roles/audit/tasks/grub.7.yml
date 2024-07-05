@@ -1,0 +1,19 @@
+- name: Check if audit=1 is already passed to the kernel
+  shell: grep '^GRUB_CMDLINE_LINUX=' /etc/default/grub | grep 'audit=1' | wc -l
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 7
+  register: kernels
+  changed_when: no
+  failed_when: no
+  tags: ['audit', 'auditd', 'auditsp', 'hardening', 'security', 'grub', 'grub2']
+
+- name: Enable audit ealier at kernel boot time
+  shell: > 
+      sed -i 's/\(^GRUB_CMDLINE_LINUX=".*\)".*$/\1 audit=1"/' /etc/default/grub
+  args:
+      warn: no
+  ignore_errors: "{{ ansible_check_mode }}"
+  when: (ansible_os_family == 'RedHat') and (ansible_distribution_major_version|int >= 7) and (kernels.stdout|int == 0)
+  changed_when: kernels.stdout|int == 0
+  notify: generate grub2 config
+  tags: ['audit', 'auditd', 'auditsp', 'hardening', 'security', 'grub', 'grub2']
+  

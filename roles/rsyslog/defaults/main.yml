@@ -1,0 +1,27 @@
+---
+syslog_ca_file: "etc/pki/tls/certs/{{ datacenter }}-rsyslog-ca.crt"
+syslog_spool_size: 1g
+syslog:
+    tor:
+        server: "logelk1.tor.afilias-int.info"
+        port: 5140
+    au1:
+        server: "{{ 'graylog-da.au1.afilias-ops.info' if ('db' in group_names) or ('dap' in group_names) else 'graylog.au1.afilias-ops.info' }}"
+        port: 5140
+    au2:
+        server: "{{ 'graylog-da.au2.afilias-ops.info' if ('db' in group_names) or ('dap' in group_names) else 'graylog.au2.afilias-ops.info' }}"
+        port: 5140
+    on1:
+        server: "{{ 'logelk1-da.on1.afilias-ops.info' if ('db' in group_names) or ('dap' in group_names) else 'logelk1.on1.afilias-ops.info' }}"
+        port: 5140
+    tx1:
+        server: "{{ 'logelk1-da.tx1.afilias-ops.info' if ('db' in group_names) or ('dap' in group_names) else 'logelk1.tx1.afilias-ops.info' }}"
+        port: 5140
+    cn1:
+        server: "{{ 'logelk1-da.cn1.afilias-ops.info' if ('db' in group_names) or ('dap' in group_names) else 'logelk1.cn1.afilias-ops.info' }}"
+        port: 5140
+    phl:
+        server: "{{ 'logelk1-da.phl.afilias-int.info' if ('db' in group_names) or ('dap' in group_names) else 'logelk1.phl.afilias-int.info' }}"
+        port: 5140
+
+

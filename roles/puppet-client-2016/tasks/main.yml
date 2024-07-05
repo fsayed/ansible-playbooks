@@ -1,0 +1,65 @@
+---
+- name: check if old puppet 2.7 exists
+  stat: path=/opt/puppet/bin/puppet
+  register: old_puppet
+  tags: ['puppet2016']
+
+- name: checking for old puppet client
+  debug: msg="old puppet 2.7 client might still be installed, remove it first"
+  when: old_puppet.stat.exists
+  tags: ['puppet2016']
+
+# only run this block if old puppet does not exist
+- block:
+  - name: set up afilias-extras repo
+    template: src=etc/yum.repo.d/afilias-extras.repo.j2 dest=/etc/yum.repos.d/afilias-extras.repo owner=root group=root mode=0644
+
+  - name: install puppet agent package
+    yum: name='{{ item }}' enablerepo=afilias-extras state=present
+    with_items:
+      - puppet-agent
+
+  - name: add a missing section to puppet config
+    tags: addmaintopuppetconf
+    lineinfile:
+      dest: /etc/puppetlabs/puppet/puppet.conf
+      insertbefore: '^server'
+      line: '[main]'
+
+  - name: configure puppet
+    lineinfile: dest=/etc/puppetlabs/puppet/puppet.conf regexp='{{ item.regex }}' line='{{ item.line }}'
+    with_items:
+      - { regex: '^server', line: 'server = {{ puppetmaster2016 }}' }
+      - { regex: '^cert', line: 'certname = {{ inventory_hostname }}' }
+
+  - name: puppet symlink
+    file: src=/opt/puppetlabs/bin/puppet dest=/usr/local/bin/puppet state=link
+
+  - name: check if private key is present
+    stat: path=/etc/puppetlabs/puppet/ssl/private_keys/{{ inventory_hostname }}.pem
+    register: puppet_cert_file
+
+  - name: checking existence of private key
+    debug: msg="found private key, will not generate new key"
+    when: puppet_cert_file.stat.exists
+
+  # only run this block if no private key was found
+  - name: run puppet agent to generate certificate
+    command: /opt/puppetlabs/bin/puppet agent --no-daemonize --onetime --test --color=false --noop
+    ignore_errors: yes
+    when: not puppet_cert_file.stat.exists
+
+  - name: sign certificate on puppet master
+    command: sudo /opt/puppetlabs/bin/puppet cert sign {{ inventory_hostname }}
+    delegate_to: "{{ puppetmaster2016ca }}"
+    remote_user: "{{ lookup('env','USER') }}"
+    become: false
+    when: not puppet_cert_file.stat.exists
+
+  - name: Setup sudo rules for dbas on db and dap servers
+    template: src=etc/sudoers.d/dba-puppet.j2 dest=/etc/sudoers.d/dba-puppet owner=root group=root mode=0440 validate='visudo -cf %s'
+    when: "'dap' in group_names or 'db' in group_names"
+
+  when: not old_puppet.stat.exists
+  tags: ['puppet2016']
+# end block

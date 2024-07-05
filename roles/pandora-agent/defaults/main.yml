@@ -1,0 +1,43 @@
+---
+#pandora_yum_base_url: http://osrepo.tor.afilias-int.info/project_repos/afilias-extras
+
+remote_config_value: 1
+
+pandora_user: nocmon
+
+pandora_group: nocmon
+
+pandora_servers:
+  au1: 10.120.0.246
+  au1da: 10.120.32.246
+  au1hw: 10.120.48.246
+  au2: 10.133.0.246
+  tx1: 10.108.0.246
+  tx1da: 10.108.32.246
+  on1: 10.109.0.246
+  on1da: 10.109.32.246
+  tor: 10.10.32.246
+  stg: 10.10.32.248
+  cn1: 10.115.0.246
+  cn1da: 10.115.32.246
+  cn2: 10.118.0.246
+  cn2da: 10.118.32.246
+  ay1: 172.16.21.17
+  ay1da: 172.16.21.17
+  aws1: 10.113.1.21
+  aws2: 10.112.1.21
+  phl: 10.11.208.246
+  in1: 10.60.0.246
+  in1da: 10.60.32.246
+  in1hw: 10.60.48.246
+  in3: 10.111.0.246
+  in3hw: 10.111.48.246
+  in3da: 10.111.32.246
+  donuts: 10.101.70.13
+  default: 0.0.0.0
+
+pandora_server: "{{ pandora_servers[pandora_svr] if pandora_servers[pandora_svr] is defined else pandora_servers['default'] }}"
+
+pandora_agent: /usr/bin/pandora_agent
+
+usr_share_pandora_agent: /usr/share/pandora_agent

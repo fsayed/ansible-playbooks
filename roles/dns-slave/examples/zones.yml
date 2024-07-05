@@ -1,0 +1,15 @@
+---
+dns_slave_zones:
+    - afilias-int.info
+    - afilias-ops.info
+    - tor.afilias-int.info
+    - on1.afilias-ops.info
+    - tx1.afilias-ops.info
+    - au1.afilias-ops.info
+    - 0.10.10.in-addr.arpa
+    - 24.10.10.in-addr.arpa
+    - 32.10.10.in-addr.arpa
+    - 108.10.10.in-addr.arpa
+    - 109.10.10.in-addr.arpa
+    - 120.10.in-addr.arpa
+

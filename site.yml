@@ -1,0 +1,24 @@
+---
+- hosts: all
+  roles:
+      - { role: common, when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 6 }
+
+- hosts: db
+  roles:
+      - role: afilias-db 
+        vg_name: "vg_rg"
+        lv_name: "lv_rg"
+        fstype: "xfs"
+        fsopts: defaults,nodev,nosuid
+        mountpoint: "/opt/rg"
+        when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 6
+
+- hosts: dap
+  roles:
+      - role: afilias-db
+        vg_name: "vg_rg"
+        lv_name: "lv_rg"
+        fstype: "xfs"
+        fsopts: defaults,nodev,nosuid
+        mountpoint: "/opt/escrow1"
+        when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 6

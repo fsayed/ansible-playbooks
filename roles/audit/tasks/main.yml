@@ -1,0 +1,63 @@
+- name: Install audit
+  package: name=audit state=present
+  tags: ['audit', 'auditd', 'audisp']
+
+# We assumed audit is installed. Usually this is the case even with minimal installation.
+# We will only configure audit if version >= 2.3.x
+# We also assumed audit now at least > 2.x.x (< 2.x.x is very old)
+# We could update audit base on this condition as well but for now we will not touch the system.
+- name: Check audit version
+  shell: rpm -q --queryformat "%{VERSION}" audit | awk -F\. '{print $2}'
+  args: 
+      warn: no
+  register: audit_version
+  changed_when: no
+  check_mode: no
+  tags: ['audit', 'auditd', 'audisp']
+
+- name: Enable augenrules for EL6
+  lineinfile:
+      path: /etc/sysconfig/auditd
+      regexp: '^#?USE_AUGENRULES='
+      backrefs: yes
+      line: 'USE_AUGENRULES="yes"'
+  when: (audit_version.stdout|int >= 3) and (ansible_distribution_major_version|int < 7)
+  notify: restart auditd
+  tags: ['audit', 'auditd', 'audisp']
+
+- name: Configure auditd
+  template: src=etc/audit/auditd.conf.j2 dest=/etc/audit/auditd.conf owner=root group=root mode=0640
+  when: audit_version.stdout|int >= 3
+  notify: restart auditd
+  tags: ['audit', 'auditd', 'audisp']
+
+- name: Search for privileged commands
+  shell: >
+      find /usr -xdev \( -perm -4000 -o -perm -2000 \) -type f | awk '{print "-a always,exit -F path=" $1 " -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged"}'
+  args: 
+      warn: no
+  changed_when: no
+  failed_when: no
+  register: audit_rules
+  tags: ['audit', 'auditd', 'audisp']
+
+- name: Configure audit rules
+  template: src=etc/audit/rules.d/audit.rules.j2 dest=/etc/audit/rules.d/audit.rules owner=root group=root mode=0640
+  ignore_errors: "{{ ansible_check_mode }}"
+  when: audit_version.stdout|int >= 3
+  notify: restart auditd
+  tags: ['audit', 'auditd', 'audisp']
+
+- name: Configure audit dispatcher
+  template: src=etc/audisp/plugins.d/syslog.conf.j2 dest=/etc/audisp/plugins.d/syslog.conf owner=root group=root mode=0640
+  when: audit_version.stdout|int >= 3
+  notify: restart auditd
+  tags: ['audit', 'auditd', 'audisp']
+
+- name: Start and enable auditd service
+  service: name=auditd state=started enabled=yes use=service
+  when: audit_version.stdout|int >= 3
+  tags: ['audit', 'auditd', 'audisp']
+
+- include_tasks: grub.{{ ansible_distribution_major_version }}.yml
+

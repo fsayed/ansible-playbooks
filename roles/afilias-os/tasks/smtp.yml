@@ -1,0 +1,36 @@
+---
+- name: Setup main SMTP relay host
+  lineinfile: dest=/etc/postfix/main.cf regexp="^relayhost" line="relayhost = [{{ smtp_relay_host }}]"
+  when: "'ops' not in group_names"
+  notify: restart postfix
+  tags: ['smtp','mail']
+
+- name: Setup fallback SMTP relay host
+  lineinfile: dest=/etc/postfix/main.cf regexp="^smtp_fallback_relay" line="smtp_fallback_relay = [{{ smtp_fallback_relay_host }}]"
+  when: "'ops' not in group_names"
+  notify: restart postfix
+  tags: ['smtp','mail']
+
+- name: Check if root email alias has been setup
+  shell: grep "^root:" /etc/aliases | grep '{{ root_email_alias }}'  | wc -l
+  changed_when: no
+  failed_when: no
+  check_mode: no
+  register: wc
+  tags: ['smtp','mail']
+
+- name: Setup Email alias for root account
+  lineinfile: 
+    path: /etc/aliases 
+    regexp: "^root:" 
+    line: "root:		{{ root_email_alias }}"
+  ignore_errors: "{{ ansible_check_mode }}"
+  when: wc.stdout|int == 0
+  tags: ['smtp','mail']
+
+- name: Activate new Email alias
+  command: newaliases
+  ignore_errors: "{{ ansible_check_mode }}"
+  when: wc.stdout|int == 0
+  tags: ['smtp','mail']
+

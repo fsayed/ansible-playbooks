@@ -1,0 +1,12 @@
+---
+pe_version: 2.7.0
+
+puppet_yum_base_url: http://osrepo.tor.afilias-int.info/project_repos
+
+pe_environment:
+  prod: puppet-ent.tor.afilias-int.info
+  lab: puppet-lab.tor.afilias-int.info
+  default: devpuppet.tor.afilias-int.info
+
+puppetmaster: "{{ pe_environment[puppet_environment] if pe_environment[puppet_environment] is defined else pe_environment['default'] }}"
+

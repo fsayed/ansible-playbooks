@@ -1,0 +1,30 @@
+- name: Ensure cron is installed
+  package: name=cronie state=present
+  when: ansible_os_family == 'RedHat'
+  tags: ['cis', 'hardening', 'security', 'cron']
+
+- name: Ensure cron daemon is enabled
+  service: name=crond state=started enabled=yes
+  when: ansible_os_family == 'RedHat'
+  tags: ['cis', 'hardening', 'security', 'cron']
+
+- name: Ensure permissions on /etc/crontab are secured
+  file: path=/etc/crontab owner=root group=root mode=0600
+  when: ansible_os_family == 'RedHat'
+  tags: ['cis', 'hardening', 'security', 'cron']
+
+- name: Ensure permissions on cron directories are secured
+  file: path={{ item }} state=directory owner=root group=root mode=0700
+  with_items:
+      - /etc/cron.d
+      - /etc/cron.hourly
+      - /etc/cron.daily
+      - /etc/cron.weekly
+      - /etc/cron.monthly
+  when: ansible_os_family == 'RedHat'
+  tags: ['cis', 'hardening', 'security', 'cron']
+
+- name: Ensure at/cron is restricted to authorized users
+  include_role:
+      name: cron-access
+

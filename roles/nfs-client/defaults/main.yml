@@ -1,0 +1,6 @@
+---
+# defaults file for nfs-client
+
+# Default NFS mount options
+nfs_client_mount_opts: ro,retry=3,rsize=32768,nodev,nosuid,sec=sys
+

@@ -1,0 +1,76 @@
+---
+- name: Make sure /opt/home exits
+  file: dest=/opt/home state=directory owner=root group=root mode=0755
+  tags: ['pandora', 'pandora-agent']
+
+- group:
+   name: nocmon
+   gid: 10042
+   state: present
+  tags: ['pandora', 'pandora-agent']
+
+- user:
+   name: '{{ pandora_user }}'
+   comment: "Pandora Agent"
+   uid: 10042
+   shell: /bin/bash
+   home: /opt/home/nocmon
+   group: nocmon
+   state: present
+  tags: ['pandora', 'pandora-agent']
+
+- name: nocmon user does not get disabled
+  shell: /usr/bin/chage -M 99999 -m 0 -W 7 {{ pandora_user }}
+  tags: ['pandora', 'pandora-agent']
+
+- name: Check if pandora_agent.conf exists
+  stat: path=/etc/pandora/do_not_del.txt
+  register: pandora
+  tags: ['pandora', 'pandora-agent']
+
+- import_role:
+      name: afilias-os
+      tasks_from: repo-extras
+  tags: ['pandora', 'pandora-agent']
+
+- name: Install Pandora agent and dependencies
+  yum: name="pandorafms_agent_unix" enablerepo=afilias-extras  state=present disable_gpg_check=yes
+  tags: ['pandora', 'pandora-agent']
+
+- name: Required Perl Module perl-Sys-Syslog for Centos/RedHat 7
+  yum: name="perl-Sys-Syslog" enablerepo=afilias-extras state=present disable_gpg_check=yes
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "7"
+  tags: ['pandora', 'pandora-agent']
+  
+- name: Setup pandora startup script
+  template: src=etc/init.d/pandora_agent_daemon.j2 dest=/etc/init.d/pandora_agent_daemon owner={{ pandora_user }} mode=0755
+  tags: ['pandora', 'pandora-agent']
+
+- name: Create log directory
+  file: dest=/var/log/pandora state=directory owner={{ pandora_user }} group=root mode=0755 recurse=yes
+  tags: ['pandora', 'pandora-agent']
+
+- name: Fix default permission
+  file: path={{ pandora_agent }} owner={{ pandora_user }} mode=0755
+  ignore_errors: "{{ ansible_check_mode }}"
+  tags: ['pandora', 'pandora-agent']
+
+- name: Fix ownership on pandora libs
+  file: path={{ usr_share_pandora_agent }} state=directory owner={{ pandora_user }} recurse=yes
+  tags: ['pandora', 'pandora-agent']
+
+- name: Setup pandora agent configuration
+  template: src=etc/pandora/pandora_agent.conf.j2 dest=/usr/share/pandora_agent/pandora_agent.conf owner={{ pandora_user }} group=root mode=0755
+  notify: restart pandora_agent
+  tags: ['pandora', 'pandora-agent']
+
+- name: Remove 'pandora' user, we use nocmon instead
+  user: name=pandora state=absent remove=yes
+
+- name: Pandora Restart Only
+  file: path=/etc/pandora/do_not_del.txt state=touch owner=root group=root mode=0600  
+  notify: restart pandora_agent
+  tags: ['pandora-restart']
+

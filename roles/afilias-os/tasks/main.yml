@@ -1,0 +1,13 @@
+---
+- import_tasks: env.yml
+- import_tasks: user-policy.yml
+- import_tasks: repo.yml
+- import_tasks: smtp.yml
+- import_tasks: spacewalk.yml
+  when: datacenter not in ('auqa', 'donuts', 'usw1')
+- import_tasks: tcp-keepalive.yml
+  when: ('epp' in group_names) and (datacenter in ('donuts'))
+- import_tasks: internet-test.yml
+- import_tasks: crowdstrike.yml
+#  when: (datacenter in ('donuts'))
+- import_tasks: lacework.yml

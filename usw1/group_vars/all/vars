@@ -1,0 +1,184 @@
+---
+datacenter: usw1
+interfaces:
+dns_search: usw1.fahadsayed.me fahadsayed.me
+dns_servers:
+   - 10.75.128.60
+   - 10.75.144.61
+
+ntp_servers:
+   - 10.75.128.60
+   - 10.75.144.61
+
+# LDAP
+ldap_client_type: nslcd
+
+ldap_cacert_file: etc/openldap/certs/usw1-cacert.crt
+
+ldap_basedn: dc=afilias, dc=info
+
+ldap_user_dn: ou=people,dc=afilias,dc=info
+
+ldap_group_dn: ou=group,dc=afilias,dc=info
+
+ldap_master: ldapproducer1.usw1.fahadsayed.me
+
+ldap_uris:
+   - ldap://ldap1.usw1.fahadsayed.me
+   - ldap://ldap2.usw1.fahadsayed.me
+
+ldap_hostaccessdn: dc=fahadsayed.me,ou=hosts,dc=afilias,dc=info
+
+# Kerberos
+domain_realm: usw1.fahadsayed.me
+krb5_realm: AFILIAS.INFO
+krb5_admin_server: krb5master.usw1.fahadsayed.me
+krb5_kdcs:
+   - ldap1.usw1.fahadsayed.me
+   - ldap2.usw1.fahadsayed.me
+
+krb5_domains:
+   - fahadsayed.me
+   - afilias-int.info
+   - afilias.info
+
+service_principal: service/hostadder@AFILIAS.INFO
+service_keytab: "{{ vault_service_keytab }}"
+
+# Bash settings
+shell_history_size: 10000
+shell_session_timeout: 14400
+
+# YUM repo
+yum_base_url: http://repo.au2.fahadsayed.me
+
+# Panora Server
+pandora_svr: usw1
+
+# Repo Server
+repo_svr: http://repo.au2.fahadsayed.me
+
+# Qualy Proxy Server
+qualys_proxy_server: qgproxy1.usw1.fahadsayed.me
+
+allowed_hosts: 127.0.0.1,10.113.1.20
+
+# SMTP relay
+smtp_relay_host: 10.75.128.60
+smtp_fallback_relay_host: 10.75.144.60
+
+# SNMP
+snmp_password: "{{ vault_snmp_password }}"
+snmp_syscontact: syseng@afilias.info
+
+# sudo
+default_sudo_specs:
+    - type: permission
+      user: '%syseng'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+    - type: permission
+      user: '%neteng'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+    - type: permission
+      user: '%noc'
+      host: ALL
+      runas: ALL
+      command: '/bin/su - nagios, /bin/su - zenmon, /bin/su - nocmon, /bin/su - splunk, /etc/init.d/nrpe restart, /etc/init.d/pandora_agent_daemon restart, /usr/bin/pandora_agent, /bin/su - graylog, /sbin/service collector-sidecar restart'
+
+# spacewalk server
+spacewalk_server: spacewalkpr1.usw1.fahadsayed.me
+
+spacewalk_client_repo: spacewalk-client.repo
+
+# rsyncs to TSM client
+tsm_backup: false
+rsync_hour: 4
+rsync_minute: "{{ 60 |random(0,5)}}"
+rsync_dirs: "/etc /var/spool/cron /root /opt/home"
+tsm_client:
+
+# AFILIAS LDAP Stupid Variables
+puppet_vlan: wa
+puppet_parent_node: entcore
+puppet_environment: prod
+puppet_afiliasenv: production
+
+# host members
+default_members:
+    - bkanagar
+    - cchao
+    - fsayed
+    - gopal
+    - gsp
+    - kzhao
+    - mpacyna
+    - parinya
+    - rbhardwa
+    - mweissha
+    - slimba
+    - ksyed
+    - jyeum
+    - atalan
+    - rprasad
+    - kborkako
+
+
+puppet_enabled: false
+puppet2016_enabled: false
+
+iptables_enabled: no
+iptables_rules:
+    - { proto: tcp, dport: 22 }
+
+ip6tables_enabled: no
+ip6tables_rules:
+    - { proto: tcp, dport: 22 }
+
+tcpwrappers_enabled: no
+hosts_allow:
+    - { daemon: ALL, client: '127.0., [::1]' }
+    - { daemon: sshd, client: ALL }
+
+hosts_deny:
+    - { daemon: ALL, client: ALL }
+
+cron_access_enabled: no
+cron_users:
+    - root
+    - nocmon
+
+selinux:
+    state: permissive
+
+cloud:
+    admin_username: centos
+
+sshd_config:
+    LogLevel: VERBOSE
+    MaxAuthTries: 10
+    LoginGraceTime: 60
+    ClientAliveInterval: 300
+    ClientAliveCountMax: 0
+    AuthorizedKeysFile: /etc/ssh/keys/%u/authorized_keys
+    Match:
+        - rule: User {{ cloud.admin_username }} Address 10.10.0.0/16,10.141.244.0/24,10.141.245.0/24
+          config:
+              - "{{ 'RequiredAuthentications2 publickey' if ansible_distribution_major_version|int <= 6 else 'AuthenticationMethods publickey' }}"
+
+rhn_cert: "usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT"
+
+activation_key_centos6: 1-centos6-x86_64
+
+activation_key_centos7: 1-centos7-x86_64
+
+activation_key_rhel6: 1-rhel6-x86_64
+
+activation_key_rhel7: 1-rhel7-x86_64
+
+pv_disk: "/dev/sdb"

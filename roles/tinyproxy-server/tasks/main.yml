@@ -1,0 +1,16 @@
+- name: tinproxy
+  yum: name=tinyproxy enablerepo="epel" state=present update_cache=yes
+  tags: ['tinyproxy', 'tinyproxy-server']
+
+- name: create filter file
+  copy: src=etc/tinyproxy/filter dest=/etc/tinyproxy/filter owner=root group=root mode=0644
+  tags: ['tinyproxy', 'tinyproxy-server']
+
+- name: update tinyproxy.conf file
+  template: src=etc/tinyproxy/tinyproxy.conf.j2 dest=/etc/tinyproxy/tinyproxy.conf owner=root group=root mode=0644
+  tags: ['tinyproxy', 'tinyproxy-server']
+
+- name: Enable and start Tinyproxy Agent
+  service: name=tinyproxy state=started enabled=yes
+  tags: ['tinyproxy', 'tinyproxy-server', 'restart-tinyproxy']
+

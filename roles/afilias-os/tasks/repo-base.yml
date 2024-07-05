@@ -1,0 +1,6 @@
+---
+- name: Set up main YUM repositories
+  template: src=etc/yum.repos.d/afilias-os.repo.j2 dest=/etc/yum.repos.d/afilias-os.repo owner=root group=root mode=0644
+  when: ansible_os_family == 'RedHat'
+  tags: ['afilias','yum']
+

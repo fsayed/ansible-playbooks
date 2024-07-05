@@ -1,0 +1,7 @@
+- name: restart named
+  service: name="{{ 'named-chroot' if (ansible_distribution_major_version|int >= 7) else 'named' }}" state=restarted
+
+- name: restorecon
+  command: restorecon -R -v /var/named/chroot/
+  when: semode.stdout != "Disabled"
+

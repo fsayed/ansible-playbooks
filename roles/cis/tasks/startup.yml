@@ -1,0 +1,23 @@
+- name: Install libselinux-python
+  yum: name="libselinux-python" state=present
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 7
+  tags: ['cis', 'hardening', 'security', 'startup', 'prompt', 'libselinux']
+  
+- name: Ensure single-user mode required a password
+  lineinfile:
+      path: /etc/sysconfig/init
+      regexp: '^SINGLE='
+      line: 'SINGLE=/sbin/sulogin'
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 7
+  tags: ['cis', 'hardening', 'security', 'single', 'sulogin', 'sushell', 'startup']
+
+- name: Ensure interactive startup is disabled
+  lineinfile:
+      path: /etc/sysconfig/init
+      regexp: '^PROMPT='
+      line: 'PROMPT=no'
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 7
+  tags: ['cis', 'hardening', 'security', 'startup', 'prompt']
+
+
+

@@ -1,0 +1,3 @@
+command[proc_slapd]='{{ nagios_plugins_dir }}'/check_procs -c 1: -C slapd -u ldap
+command[proc_krb5kdc]='{{ nagios_plugins_dir }}'/check_procs -c 1: -C krb5kdc -u root
+command[proc_saslauthd]='{{ nagios_plugins_dir }}'/check_procs -c 1: -C saslauthd -u root

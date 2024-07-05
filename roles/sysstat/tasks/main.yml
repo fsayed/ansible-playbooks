@@ -1,0 +1,8 @@
+- name: Install sysstat
+  package: name=sysstat state=present
+  tags: ['sysstat']
+
+- name: Start collecting system activity
+  service: name=sysstat state=started enabled=yes
+  tags: ['sysstat']
+

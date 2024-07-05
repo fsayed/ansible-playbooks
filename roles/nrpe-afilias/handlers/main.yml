@@ -1,0 +1,6 @@
+---
+- name: restart nrpe-service
+  service: name=nrpe.service enabled=yes state=restarted
+
+- name: restart nrpe
+  service: name=nrpe enabled=yes state=restarted

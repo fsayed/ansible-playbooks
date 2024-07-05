@@ -1,0 +1,18 @@
+---
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.75.144.89
+      prefix: 20
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.75.144.1
+      ipv6: no
+
+iptables_enabled: no
+
+ip6tables_enabled: no
+
+rsync_dirs: "/var/named /usr/local/sbin /usr/local/data /etc /var/spool/cron /opt/log/rsyncs"

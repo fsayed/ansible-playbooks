@@ -1,0 +1,36 @@
+- name: Check if xinetd is installed
+  shell: rpm -q xinetd
+  args:
+      warn: no
+  failed_when: no
+  changed_when: no
+  register: xinetd_installed
+  when: ansible_os_family == 'RedHat'
+  tags: ['cis', 'hardening', 'security', 'services']
+
+- name: Check if {{ xinetd_item.name }} is installed
+  shell: rpm -q {{ xinetd_item.package }}
+  args:
+      warn: no
+  failed_when: no
+  changed_when: no
+  register: rpm_installed
+  when: ansible_os_family == 'RedHat'
+  tags: ['cis', 'hardening', 'security', 'services']
+
+#- name: Ensure {{ xinetd_item.name }} service is not enabled
+#  shell: chkconfig {{ item }} off 2>/dev/null
+#  with_items: "{{ xinetd_item.services }}"
+#  when: (ansible_os_family == 'RedHat') and (xinetd_installed.rc == 0) and (rpm_installed.rc == 0)
+#  tags: ['cis', 'hardening', 'security', 'services']
+
+- name: Ensure {{ xinetd_item.name }} service is not enabled
+  include_tasks: xinetd-tasks.yml
+  loop: "{{ xinetd_item.services }}"
+  loop_control:
+      loop_var: xinetd_service
+  ignore_errors: "{{ ansible_check_mode }}"
+  when: (ansible_os_family == 'RedHat') and (xinetd_installed.rc == 0) and (rpm_installed.rc == 0)
+  tags: ['cis', 'hardening', 'security', 'services']
+
+

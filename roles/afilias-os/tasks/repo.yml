@@ -1,0 +1,5 @@
+---
+- import_tasks: repo-init.yml
+- import_tasks: repo-base.yml
+- import_tasks: repo-epel.yml
+- import_tasks: repo-extras.yml

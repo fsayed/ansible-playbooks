@@ -1,0 +1,7 @@
+---
+- name: restart pe-puppet
+  service: name=pe-puppet state=restarted
+
+- name: restart pe-mcollective
+  service: name=pe-mcollective state=restarted
+

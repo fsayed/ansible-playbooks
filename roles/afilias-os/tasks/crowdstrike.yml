@@ -1,0 +1,25 @@
+- name: Crowdstrike - Install Falcon Sensor
+  yum: name=falcon-sensor enablerepo="afilias-extras" state=present update_cache=yes disable_gpg_check=yes
+  tags: ['crowdstrike', 'falcon-sensor']
+  
+- name: Crowdstrike - Configure Falcon Sensor
+  shell: >
+      /opt/CrowdStrike/falconctl -s -f --cid="3E959C96344C47A0B3297C2F8665B290-E0" --tags="{{ datacenter }}"
+      && touch /etc/syseng/crowdstrike-falcon-sensor.configured
+  args:
+    creates: /etc/syseng/crowdstrike-falcon-sensor.configured
+    warn: no
+  tags: ['crowdstrike', 'falcon-sensor', 'configure-crowdstrike']
+
+- name: Crowdstrike - configure and enable proxy
+  shell: >
+      /opt/CrowdStrike/falconctl -s --aph={{ qualys_proxy_server }} --app=31280
+      && /opt/CrowdStrike/falconctl -s --apd=FALSE
+  args:
+    warn: no
+  tags: ['crowdstrike', 'falcon-sensor', 'configure-crowdstrike']
+  when: "(internet_test is failed)"
+
+- name: Crowdstrike - Enable and start Falcon Sensor
+  service: name=falcon-sensor state=restarted enabled=yes
+  tags: ['crowdstrike', 'falcon-sensor', 'restart-crowdstrike']

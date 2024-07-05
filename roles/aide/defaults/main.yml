@@ -1,0 +1,5 @@
+---
+aide:
+    exclude:
+        - /opt/rg
+

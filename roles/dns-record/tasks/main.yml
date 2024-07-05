@@ -1,0 +1,17 @@
+---
+- set_fact:
+      dns_data: "{{ dns_data|default([]) + [record] if record else dns_data }}"
+  vars:
+      record: "{{ 'host ' + item.dns_name + ' ' +  item.ip if item.dns_name is defined else '' }}"
+#      record: "{{ 'host ' + item.dns_name.split('.')[1:] | join('.') + ' ' + item.dns_name + ' ' +  item.ip if item.dns_name is defined else '' }}"
+  changed_when: dns_data|length > 0
+  notify: register dns
+  with_items: "{{ interfaces }}"
+
+- set_fact:
+      dns_data: "{{ dns_data + [record] if record else dns_data }}"
+  vars:
+      record: "{{ 'alias ' + item.dns_alias + ' ' + item.dns_name if item.dns_alias is defined else '' }}"
+#      record: "{{ 'alias ' + item.dns_alias.split('.')[1:] | join('.') + ' ' +  item.dns_alias + ' ' + item.dns_name if item.dns_alias is defined else '' }}"
+  with_items: "{{ interfaces }}"
+

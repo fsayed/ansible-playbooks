@@ -1,0 +1,44 @@
+---
+nfs:
+    domain:
+        acs: acs.afilias-ops.info
+        au1: au1.afilias-ops.info
+        au2: au2.afilias-ops.info
+        auqa: auqa.afilias-ops.info
+        aws1: aws1.afilias-ops.info
+        aws2: aws2.afilias-ops.info
+        cn1: cn1.afilias-ops.info
+        cn2: cn2.afilias-ops.info
+        in1: in1.afilias-ops.info
+        in3: in3.afilias-ops.info
+        lab: lab.afilias-int.info
+        on1: on1.afilias-ops.info
+        phl: phl.afilias-int.info
+        stg: stg.afilias-ops.info
+        tor: tor.afilias-int.info
+        tx1: tx1.afilias-ops.info
+        default: afilias.info
+
+#Examples
+#nfs_shares:
+#    - path: /opt/export/dotau-reports
+#      clients:
+#          - name: auepp1.au1.afilias-ops.info
+#            permission: ro,insecure 
+#      
+#          - name: auepp2.au1.afilias-ops.info
+#            permission: ro,insecure 
+#
+#          - name: auepp3.au1.afilias-ops.info
+#            permission: ro,insecure 
+#
+#    - path: /var/www/html
+#      clients:
+#          - name: osrepo.tor.afilias-int.info
+#            permission: ro,insecure 
+#      
+#          - name: bk1.tor.afilias-int.info
+#            permission: ro,no_root_squash
+
+nfs_domain: "{{ nfs.domain[datacenter] if nfs.domain[datacenter] is defined else nfs.domain['default'] }}"
+

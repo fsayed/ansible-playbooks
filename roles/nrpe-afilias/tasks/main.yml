@@ -1,0 +1,125 @@
+---
+
+- group:
+   name: nagios
+   gid: 9999
+   state: present
+  tags: ['nrpe', 'nrpe-afilias']
+
+- user:
+   name: "{{ nrpe_user }}"
+   comment: "nagios"
+   uid: 9999
+   shell: /bin/bash
+   home: "{{ home_dir }}"
+   group: nagios
+   groups: mail,postfix
+   state: present
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: nagios user does not get disabled
+  shell: /usr/bin/chage -M 99999 -m 0 -W 7 nagios
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: copy correct .bash_profile file with update PATH envar
+  copy: src=opt/home/nagios/bash_profile dest=/opt/home/nagios/.bash_profile owner='{{ nrpe_user }}' group='{{ nrpe_user }}' mode=0744
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: Set up afilias-extra repo for NRPE
+  template: src=etc/yum.repos.d/afilias-extras.repo.j2 dest=/etc/yum.repos.d/afilias-extras.repo owner=root group=root mode=0644
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: Install NRPE client for CentOS/RedHat 6 or 7
+  yum: name='{{ item }}' enablerepo=afilias-extras state=present update_cache=yes
+  with_items:
+    - nrpe.{{ ansible_architecture }}
+    - nagios-plugins-nrpe.{{ ansible_architecture }}
+    - nagios-plugins-all.{{ ansible_architecture }}
+  when: 
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "7" or ansible_distribution_major_version == "6"
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: create directory /etc/nagios/nrpe.d
+  file: path='{{ nrpe_d_dir }}' state=directory owner='{{ nrpe_user }}' group='{{ nrpe_user }}' mode=0755
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: modify the main config file
+  template: src=etc/nagios/nrpe.cfg.j2 dest=/etc/nagios/nrpe.cfg owner='{{ nrpe_user }}' group='{{ nrpe_user }}' mode=0644
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: modify basic_check.cfg
+  template: src=etc/nagios/basic_checks.cfg.j2 dest={{ nrpe_d_dir }}/basic_checks.cfg owner='{{ nrpe_user }}' group='{{ nrpe_user }}' mode=0644
+  tags: ['nrpe', 'nrpe-afilias']
+ 
+- name: modify ldap_checks
+  template: src=etc/nagios/ldap_checks.cfg.j2 dest={{ nrpe_d_dir }}/ldap_checks.cfg owner='{{ nrpe_user }}' group='{{ nrpe_user }}' mode=0644
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: Copy alldiskcheck.conf to /etc/nagios/nrpe.d/
+  copy: src=etc/nagios/nrpe.d/alldiskcheck.conf dest={{ nrpe_d_dir }}/alldiskcheck.conf owner='{{ nrpe_user }}' group='{{ nrpe_user }}' mode=0644
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: Copy noc_file_mtime.pl to /usr/lib64/nagios/plugins
+  copy: src=usr/lib64/nagios/plugins/noc_file_mtime.pl dest={{ nagios_plugins_dir }}/noc_file_mtime.pl  owner='{{ nrpe_user }}' group='{{ nrpe_user }}' mode=0744
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: Copy noc_ssl_der.sh to /usr/lib64/nagios/plugins
+  copy: src=usr/lib64/nagios/plugins/noc_ssl_der.sh dest={{ nagios_plugins_dir }}/noc_ssl_der.sh  owner='{{ nrpe_user }}' group='{{ nrpe_user }}' mode=0744
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: modify alldiskcheck.pl for alldiskcheck.conf location
+  template: src=usr/lib64/nagios/plugins/alldiskcheck.pl.j2 dest={{ nagios_plugins_dir }}/alldiskcheck.pl owner='{{ nrpe_user }}' group='{{ nrpe_user }}' mode=0744
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: Copy out_of_memory_check.pl to /usr/lib64/nagios/plugins
+  copy: src=usr/lib64/nagios/plugins/out_of_memory_check.pl dest={{ nagios_plugins_dir }}/out_of_memory_check.pl  owner='{{ nrpe_user }}' group='{{ nrpe_user }}' mode=0744
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: mail checks mail.cfg
+  template: src=etc/nagios/mail.cfg.j2 dest={{ nrpe_d_dir }}/mail.cfg  owner='{{ nrpe_user }}' group='{{ nrpe_user }}' mode=0644
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: mail check inodecheck.pl
+  template: src=usr/lib64/nagios/plugins/inodecheck.pl.j2 dest={{ nagios_plugins_dir }}/inodecheck.pl owner='{{ nrpe_user }}' group='{{ nrpe_user }}' mode=0744
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: mail check check_panic.pl
+  copy: src=usr/lib64/nagios/plugins/check_panic.pl dest={{ nagios_plugins_dir }}/check_panic.pl  owner='{{ nrpe_user }}' group='{{ nrpe_user }}' mode=0744
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: update command.cfg
+  template: src=etc/nagios/command.cfg.j2 dest=/etc/nagios/command.cfg owner='{{ nrpe_user }}' group='{{ nrpe_user }}' mode=0644
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: copy check_swap_usage file to plugins dir
+  copy: src=usr/lib64/nagios/plugins/check_swap_usage dest={{ nagios_plugins_dir }}/check_swap_usage owner='{{ nrpe_user }}' group='{{ nrpe_user }}' mode=0744
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: changing ownership of /etc/nagios/nrpe.d
+  file: path='{{ nrpe_conf_dir }}' state=directory owner='{{ nrpe_user }}' group='{{ nrpe_group }}' recurse=yes mode=0755
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: changing ownership of /var/run/nrpe
+  file: path='{{ nrpe_pid_dir }}' state=directory owner='{{ nrpe_user }}' group='{{ nrpe_group }}' recurse=yes mode=0755
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: changing ownership of /usr/lib64/nagios/plugins
+  file: path='{{ nagios_plugins_dir }}' state=directory owner='{{ nrpe_user }}' group='{{ nrpe_group }}' mode=0755
+  tags: ['nrpe', 'nrpe-afilias']
+
+- name: update startup script with correct params for RedHat 7 family
+  template: src=usr/lib/systemd/system/nrpe.service.j2 dest=/usr/lib/systemd/system/nrpe.service owner=root group=root mode=0755
+  notify: restart nrpe-service
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "7"
+  tags: ['nrpe', 'nrpe-afilias'] 
+
+- name: update startup script with correct params for RedHat 6 family
+  template: src=etc/init.d/nrpe.j2 dest=/etc/init.d/nrpe owner=root group=root mode=0755
+  notify: restart nrpe
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "6"
+  tags: ['nrpe', 'nrpe-afilias']

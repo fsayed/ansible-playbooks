@@ -1,0 +1,10 @@
+[spacewalk-client]
+name=Afilias spacewalk client repo
+baseurl={{ yum_base_url }}/mrepo/CentOS-{{ ansible_distribution_major_version }}-x86_64/spacewalk-client/
+enabled=1
+gpgcheck=0
+{% if ansible_distribution == 'RedHat' %}
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+{% else %}
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}
+{% endif %}

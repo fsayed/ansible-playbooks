@@ -1,0 +1,7 @@
+- name: Test Internet Connectivity
+  uri:
+    url: https://www.google.com
+    return_content: no
+  register: internet_test
+  ignore_errors: yes
+  tags: ['crowdstrike', 'falcon-sensor', 'configure-crowdstrike', 'lacework']

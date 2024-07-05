@@ -1,0 +1,9 @@
+{% if at_users is defined %}
+{% for user in at_users %}
+{{ user }}
+{% endfor %}
+{% else %}
+{% for user in cron_users %}
+{{ user }}
+{% endfor %}
+{% endif %}

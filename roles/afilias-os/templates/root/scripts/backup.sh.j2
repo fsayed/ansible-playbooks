@@ -1,0 +1,31 @@
+#!/bin/bash
+HOST_NAME=`hostname -s`
+TSM_CLIENT={{ tsm_client }}
+LIST="{{ rsync_dirs }}"
+DATE=`date +20%y-%m`
+MAIL_ADDR="syseng-backups@afilias.info"
+LC_ALL=en_US
+LANG=en_US
+mkdir -p /opt/log/rsyncs
+LOGFILE="/opt/log/rsyncs/${HOST_NAME}-${DATE}.log"
+TEMP_LOG="/tmp/temp_log.log"
+echo -e `date -u "+%Y-%m-%d_%H%M%S"` "#### $0 started." >> "$LOGFILE"
+# echo $LIST
+NEW_LIST=""
+for i in $LIST
+do
+if [ -f $i -o -d $i ] 
+        then
+        NEW_LIST=$NEW_LIST" "$i
+        fi
+done
+echo -e "###### rsyncing LIST: $NEW_LIST" >> "$LOGFILE"
+/usr/bin/rsync -arHDS --numeric-ids --delete --relative -e "ssh -i /root/scripts/.ssh/id_rsa -o StrictHostKeyChecking=no" $NEW_LIST "${HOST_NAME}@${TSM_CLIENT}:/tsm/stage/${HOST_NAME}/" > "$TEMP_LOG" 2>&1
+RC=$?
+cat $TEMP_LOG | grep -ve "This computer system is for authorized users only. All activity is logged and regulary checked by systems personal. Individuals using this system without authority or in excess of their authority are subject to having all their services revoked. Any illegal services run by user or attempts to take down this server or its services will be reported to local law enforcement, and said user will be punished to the full extent of the law. Anyone using this system consents to these terms." -ve "^***" -ve "^$" >> "$LOGFILE"
+echo -e `date -u "+%Y-%m-%d_%H%M%S"` "## $0 rsync done with exit code $RC" >> "$LOGFILE"
+if [ $RC -ne 0 -a $RC -ne 23 -a $RC -ne 24 ] 
+    then
+        echo -e "## ERROR. $0 rsync exit code $RC." | tee -a "$LOGFILE" >&2
+        echo -e "## ERROR. $0 rsync exit code $RC, see $LOGFILE" | mail -s "$0 rsync failed for $HOST_NAME" "$MAIL_ADDR"
+fi

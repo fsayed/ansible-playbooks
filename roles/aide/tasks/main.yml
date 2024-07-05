@@ -1,0 +1,35 @@
+- name: Install AIDE
+  package: name={{ item }} state=present
+  with_items: ['aide', 'mailx']
+  tags: ['aide']
+
+#FIXME:Only nfs and glusterfs for now
+- name: Look for none local filesystems(we will ignore them)
+  shell: awk '/nfs|glusterfs/ {print $2}' /etc/fstab
+  register: ignored_list
+  changed_when: no
+  check_mode: no
+  tags: ['aide']
+
+- name: Configure aide
+  template: src=etc/aide.{{ ansible_distribution_major_version }}.conf.j2 dest=/etc/aide.conf owner=root group=root mode=0600
+  ignore_errors: "{{ ansible_check_mode }}"
+  tags: ['aide']
+
+- name: Create initial AIDE database
+  command: creates=/var/lib/aide/aide.db.gz aide --init
+  tags: ['aide']
+
+- name: Setup AIDE baseline
+  command: creates=/var/lib/aide/aide.db.gz mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+  tags: ['aide']
+
+- name: Install AIDE cronjob
+  copy: 
+      content: "{{ 59 |random(seed=inventory_hostname) }} 01 * * * root /usr/sbin/aide --check | mail -s 'Daily Check by AIDE on {{ inventory_hostname }}' root\n"
+      dest: /etc/cron.d/aide
+      owner: root
+      group: root
+      mode: 0600
+  tags: ['aide']
+

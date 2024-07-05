@@ -1,0 +1,16 @@
+---
+  - name: Set tcp keepalive time
+    sysctl: name="net.ipv4.tcp_keepalive_time" value="180" sysctl_set=yes state=present
+    ignore_errors: True
+    tags: ['tcp-keepalive']
+
+  - name: Set tcp keepalive interval
+    sysctl: name="net.ipv4.tcp_keepalive_intvl" value="10" sysctl_set=yes state=present
+    ignore_errors: True
+    tags: ['tcp-keepalive']
+
+  - name: Set tcp keepalive number of probes
+    sysctl: name="net.ipv4.tcp_keepalive_probes" value="17" sysctl_set=yes state=present
+    ignore_errors: True
+    tags: ['tcp-keepalive']
+

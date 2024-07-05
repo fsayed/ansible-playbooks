@@ -1,0 +1,4 @@
+- name: Install logwatch
+  package: name=logwatch state=present
+  tags: ['logwatch']
+

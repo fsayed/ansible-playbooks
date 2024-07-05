@@ -1,0 +1,10 @@
+---
+- name: update default password policy
+  replace: dest=/etc/login.defs regexp='{{ item.regex }}' replace='{{ item.value }}'
+  with_items:
+    - { regex: '^(?=PASS_MAX_DAYS\b)(?=^(?!{{ pass_max_days }})).*$', value: 'PASS_MAX_DAYS   {{ pass_max_days }}' }
+    - { regex: '^(?=PASS_MIN_DAYS\b)(?=^(?!{{ pass_min_days }})).*$', value: 'PASS_MIN_DAYS   {{ pass_min_days }}' }
+    - { regex: '^(?=PASS_MIN_LEN\b)(?=^(?!{{ pass_min_len }})).*$', value: 'PASS_MIN_LEN   {{ pass_min_len }}' }
+    - { regex: '^(?=PASS_WARN_AGE\b)(?=^(?!{{ pass_warn_age }})).*$', value: 'PASS_WARN_AGE   {{ pass_warn_age }}' }
+  tags: ['password', 'password-policy', 'user-policy']
+

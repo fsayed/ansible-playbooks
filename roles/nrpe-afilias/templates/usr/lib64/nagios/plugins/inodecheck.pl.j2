@@ -1,0 +1,54 @@
+#!/usr/bin/perl
+
+# define NRPE location... can't think of a awy around this
+#$nrpeloc="/usr";
+$checkdisk= "{{ nagios_plugins_dir }}/check_disk";
+
+# open configuration file, create/overwrite and timestamp log
+if (! open(LOG, ">/tmp/inodecheck.log")) { print "Unable to open log file: $!"; exit(3); };
+if (! open(CONF, "<" . "{{ nagios_plugins_dir }}/inodecheck.conf")) { print "Unable to open configuration file: $!"; exit(3); };
+print LOG `date`;
+
+# for each line in configuration
+while (<CONF>) {
+
+	s/#.*//; # remove comments, allows inline comments (at end of line, like this comment)
+
+	# match configuration into 3 variables, catch optional kB unit or use default percentage
+	if (/(.+)\s+(\d+)\s+(\d+)\s*(:?kB)?/) {
+
+		# run check_disk script, saving output and exit status
+		if (defined($4)) { 
+			$stdout = `$checkdisk -W $2 -K $3 -p $1`;
+			$exit = `echo $?`/256;
+		} else {
+			$stdout = `$checkdisk -W $2\% -K $3\% -p $1`;
+                        $exit = `echo $?`/256;
+		}
+
+		#remove pipe to avoid useless perf data
+		$stdout =~ s/\|//;
+
+		# panic (status code 3 or greater), record warnings and criticals
+		if ($exit > 2) { print "Something went wrong: $stdout"; exit(3); }
+		elsif ($exit == 2) { $crit .= $stdout; }
+		elsif ($exit == 1) { $warn .= $stdout; }
+
+		# log output
+		print LOG $stdout;
+	}
+}
+# if any criticals were recorded
+if (defined($crit)) {
+	print $crit;
+	exit(2);
+# else if any warnings were recorded
+} elsif (defined($warn)) {
+	print $warn;
+	exit(1);
+}
+# otherwise we are okay
+else {
+	print "OK: All disks within thresholds\n";
+	exit(0);
+};

@@ -1,0 +1,22 @@
+---
+- name: Setup repo for Nessus Agent
+  template: src=etc/yum.repos.d/afilias-extras.repo.j2 dest=/etc/yum.repos.d/afilias-extras.repo owner=root group=root mode=0644
+  tags: ['nessus', 'nessus-agent']
+  
+- name: Install Nessus Agent
+  yum: name=NessusAgent enablerepo="afilias-extras" state=present update_cache=yes
+  tags: ['nessus', 'nessus-agent']
+
+- name: Link Nessus Agent to Nessus Server
+  shell: >
+      /opt/nessus_agent/sbin/nessuscli agent link --key={{ nessus_agent.key }} --name={{ ansible_fqdn }} --groups={{ nessus_agent.groups }} --host={{ nessus_agent.server }}  --port={{ nessus_agent.server_port }}
+      && touch /etc/syseng/nessus-agent.configured
+  args:
+      creates: /etc/syseng/nessus-agent.configured
+      warn: no
+  tags: ['nessus', 'nessus-agent']
+
+- name: Enable and start Nessus Agent
+  service: name=nessusagent state=started enabled=yes
+  tags: ['nessus', 'nessus-agent']
+

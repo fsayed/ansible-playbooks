@@ -1,0 +1,35 @@
+- name: Install NFS server
+  yum: name=nfs-utils state=present update_cache=yes
+  tags: ['nfs', 'nfs-server']
+
+- name: Configure ID mapping
+  lineinfile: path=/etc/idmapd.conf regexp='^#?Domain ?=' line='Domain = {{ nfs_domain }}'
+  notify: restart nfs server
+  tags: ['nfs', 'nfs-server']
+
+- name: Ensure NFS shared directory exists
+  file: 
+      path: "{{ item.path }}" 
+      owner: "{{ item.owner if item.owner is defined else 'root' }}" 
+      group: "{{ item.group if item.group is defined else 'root' }}"
+      mode: "{{ item.mode if item.mode is defined else '0755' }}"
+      state: directory
+      recurse: yes
+  with_items: "{{ nfs_shares }}"
+  when: nfs_shares is defined
+  tags: ['nfs', 'nfs-server', 'test']
+
+- name: Configure NFS shares
+  template: src=etc/exports.j2 dest=/etc/exports owner=root group=root mode=0644
+  notify: restart nfs server
+  when: nfs_shares is defined
+  tags: ['nfs', 'nfs-server', 'test']
+
+- name: Enable and start RPC port mapping
+  service: name=rpcbind state=started enabled=yes
+  tags: ['nfs', 'nfs-server']
+
+- name: Enable and start NFS server
+  service: name={{ 'nfs-server' if ansible_distribution_major_version|int >= 7 else 'nfs' }} state=started enabled=yes
+  tags: ['nfs', 'nfs-server']
+

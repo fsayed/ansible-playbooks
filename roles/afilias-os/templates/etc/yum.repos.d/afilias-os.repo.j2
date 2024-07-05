@@ -1,0 +1,46 @@
+[os]
+name={{ ansible_distribution }} {{ ansible_distribution_version }} - Base
+baseurl={{ yum_base_url }}/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}/os/{{ ansible_architecture }}/
+gpgcheck=1
+{% if ansible_distribution == 'RedHat' %}
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+{% else %}
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}
+{% endif %}
+
+{% if ansible_distribution == 'CentOS' %}
+#released updates 
+[os-updates]
+name={{ ansible_distribution }} {{ ansible_distribution_version }} - Updates
+baseurl={{ yum_base_url }}/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}/updates/{{ ansible_architecture }}/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}
+
+{% endif %}
+#additional packages that may be useful
+[os-extras]
+name={{ ansible_distribution }} {{ ansible_distribution_version }} - Extras
+baseurl={{ yum_base_url }}/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}/extras/{{ ansible_architecture }}/
+gpgcheck=1
+{% if ansible_distribution == 'RedHat' %}
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+{% else %}
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}
+{% endif %}
+
+{% if datacenter not in ('cn1','cn2','au1') %}
+{% if ansible_distribution == 'RedHat' %}
+#these are for RHEL ONLY (not CentOS)
+[os-supplementary]
+name={{ ansible_distribution }} {{ ansible_distribution_version }} - Supplementary
+baseurl={{ yum_base_url }}/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}/supplementary/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+[os-optional]
+name={{ ansible_distribution }} {{ ansible_distribution_version }} - Optional
+baseurl={{ yum_base_url }}/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}/optional/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+{% endif %}
+{% endif %}

@@ -1,0 +1,28 @@
+---
+
+owner: root
+group: root
+
+customer_id: fd829f99-876d-78a5-83a6-06f6f2478814
+
+activation_ids:
+  donuts: d5cb3a79-42c8-457a-bd90-bda7689ea986
+  tordevqa: 108b7372-a653-4ebb-ad21-25447418aa11
+  stg: c34fced3-4c6c-4fe4-889a-fc868812da48
+  tx1: f44cf034-7dbe-4c69-b7d5-29a468441e55
+  on1: 4e58fe87-ad41-4f2d-ad05-54f5fdfcb665
+  in1: 545cbd9a-ce9e-40c9-9b65-0d105a3dcc4c
+  in3: e60398ba-ac7f-45d6-8447-4880576e2dba
+  cn1: 786837f3-7767-489b-a984-ad0cfbf52b9a
+  cn2: fb5216f0-feee-405b-b1ea-c03988e25170
+  auqa: a47fd93b-b5e2-4731-9412-d3598e4656b5
+  au1: 15c71c49-c9c0-4540-b03e-18f7da4f735c
+  au2: c37f1f7d-4d48-4269-9953-5bc50ffbcc2f
+  aws1: 7816b47e-4aaa-4fba-8574-a32ce337c021
+  aws2: b1bef533-f27e-4f20-9dd3-e3a89d1829eb
+  tor: 5a6eeaa8-94ce-4623-b926-e2fa6208d53e
+  default: 00000000-0000-0000-0000-000000000000
+  
+activation_id: "{{ activation_ids[datacenter] if activation_ids[datacenter] is defined else activation_ids['default'] }}"
+
+

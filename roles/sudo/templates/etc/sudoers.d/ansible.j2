@@ -1,0 +1,37 @@
+{% if default_sudo_specs is defined %}
+# From ansible default_sudo_specs group variable
+{% for item in default_sudo_specs %}
+{% if item.type == 'alias' %}
+{{ item.alias_type }} {{ item.name }} = {{ item.value }}
+
+{% elif item.type == 'permission' %}
+{{ item.user }} {{item.host if item.host is defined else 'ALL'}} = {{'(' + item.runas + ')' if item.runas is defined else '(ALL)'}} {{'NOPASSWD: ' if item.nopasswd is defined  and item.nopasswd else ''}} {{ item.command if item.command is defined else 'ALL'}}
+
+{% endif %}
+{% endfor %}
+{% endif %}
+# From ansible sudo_specs host variable
+{% if sudo_specs is defined %}
+{% for item in sudo_specs %}
+{% if item.type == 'alias' %}
+{{ item.alias_type }} {{ item.name }} = {{ item.value }}
+
+{% elif item.type == 'permission' %}
+{{ item.user }} {{item.host if item.host is defined else 'ALL'}} = {{'(' + item.runas + ')' if item.runas is defined else '(ALL)'}} {{'NOPASSWD: ' if item.nopasswd is defined  and item.nopasswd else ''}} {{ item.command if item.command is defined else 'ALL'}}
+
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if product_sudo_specs is defined %}
+# from ansible product_sudo_specs variable
+{% for item in product_sudo_specs %}
+{% if item.type == 'alias' %}
+{{ item.alias_type }} {{ item.name }} = {{ item.value }}
+
+{% elif item.type == 'permission' %}
+{{ item.user }} {{item.host if item.host is defined else 'ALL'}} = {{'(' + item.runas + ')' if item.runas is defined else '(ALL)'}} {{'NOPASSWD: ' if item.nopasswd is defined  and item.nopasswd else ''}} {{ item.command if item.command is defined else 'ALL'}}
+
+{% endif %}
+{% endfor %}
+{% endif %}

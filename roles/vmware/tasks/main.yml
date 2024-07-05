@@ -1,0 +1,44 @@
+---
+# Worked around a possibly vmware bug
+# VMware gives out errors on VM randomly if we create multiple at once
+# We also don't want to create one VM at a time, so we will create VMs with a little bit of gap between
+# Create a wait number from the host index in the group
+- name: Setting delay between VM creation
+  set_fact:
+      time_in_seconds: "{{ 5 * groups.new_hosts.index(inventory_hostname) }}"
+
+- name: Delay creation of multiple VMs in VMware (Workaround a VMware/Ansible bug)
+  wait_for:  
+      timeout: "{{ time_in_seconds }}"
+
+# Convert IP prefix in our host var into netmask for vmware_guest network
+- name: Preparing VM specs ...
+  set_fact:
+      networks: "{{ networks|default([]) + [ item|combine({'netmask': mask}) ] if item.ip is defined else networks + [ item ] }}"
+  vars:
+      mask: "{{ [item.ip|string + '/' + item.prefix|string][0] | ipaddr('host/prefix') | ipaddr('netmask') if item.ip is defined else '' }}"
+  with_items: "{{ interfaces }}"
+
+- name: Deploy a virtual machine from template ...
+  vmware_guest:
+      hostname: "{{ vmware.server }}"
+      datacenter: "{{ vmware.datacenter }}"
+      cluster: "{{ cluster | default(vmware.cluster) }}"
+      validate_certs: no
+      folder: "{{ folder | default(vmware.vm.folder) }}"
+      name: "{{ vm_name }}"
+      template: "{{ template | default(vmware.template) }}"
+      state: poweredon
+      hardware:
+          memory_mb: "{{ memory_mb | default(vmware.vm.memory_mb) }}"
+          num_cpus: "{{ num_cpus | default(vmware.vm.num_cpus) }}"
+          num_cpu_cores_per_socket: "{{ num_cpu_cores_per_socket | default(vmware.vm.num_cpu_cores_per_socket) }}"
+          scsi: "{{ scsi | default(vmware.vm.scsi) }}"
+          hotadd_cpu: "{{ hotadd_cpu | default(vmware.vm.hotadd_cpu) }}"
+          hotremove_cpu: "{{ hotremove_cpu | default(vmware.vm.hotremove_cpu) }}"
+          hotadd_memory: "{{ hotadd_memory | default(vmware.vm.hotadd_memory) }}"
+      disk: "{{ disk }}"
+      networks: "{{ networks }}"
+      wait_for_ip_address: yes
+  delegate_to: localhost
+

@@ -1,0 +1,14 @@
+---
+- name: Install sudo
+  yum: name=sudo state=present update_cache=yes
+  when: ansible_os_family == 'RedHat'
+  tags: sudo
+
+- name: disable sudo requiretty, some ansible tasks need this
+  lineinfile: dest=/etc/sudoers regexp='^(Defaults)(.*[^!])(requiretty)$' line='\1\2!\3' backrefs=yes owner=root group=root mode=0440
+  tags: sudo
+
+- name: Configure sudo
+  template: src=etc/sudoers.d/ansible.j2 dest=/etc/sudoers.d/ansible owner=root group=root mode=0440 validate='visudo -cf %s'
+  tags: sudo
+

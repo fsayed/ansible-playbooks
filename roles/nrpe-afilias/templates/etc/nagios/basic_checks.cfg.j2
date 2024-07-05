@@ -1,0 +1,6 @@
+## Standard checks: load avg, total process count, swap use, disk space (all "local" volumes)
+command[check_load]={{ nagios_plugins_dir }}/check_load -w 20,15,10 -c 30,25,20
+command[check_total_procs]={{ nagios_plugins_dir }}/check_procs -w 500 -c 800
+command[check_swap]={{ nagios_plugins_dir }}/check_swap_usage -w 25 -c 50
+command[check_disk_all]={{ nagios_plugins_dir }}/alldiskcheck.pl
+command[check_splunk]={{ nagios_plugins_dir }}/check_procs -c 1:2 -C splunkd -a 'splunkd -p 8089'

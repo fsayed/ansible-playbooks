@@ -1,0 +1,9 @@
+[infrastructure]
+ops1
+ops2
+krb5master
+ldapproducer1
+
+[devops]
+gitlab-runner1
+gitlab-runner2

@@ -1,0 +1,13 @@
+server_url: {{ graylog_api_url }}
+server_api_token: {{ graylog_server_api_token }}
+node_id: /etc/graylog/sidecar/node-id
+node_name: {{ inventory_hostname }}
+update_interval: 10
+tls_skip_verify: true
+send_status: true
+list_log_files:
+cache_path: /var/cache/graylog-sidecar
+collector_configuration_directory: /var/lib/graylog-sidecar/generated
+log_path: /var/log/graylog-sidecar
+log_rotate_max_file_size: 10MiB
+log_rotate_keep_files: 50

@@ -1,0 +1,19 @@
+---
+- name: restart postfix
+  service: name=postfix state=restarted
+  tags: ['smtp','mail']
+
+- name: restart snmpd
+  service: name=snmpd state=restarted
+  tags: ['snmp']
+
+- name: run backup
+  shell: /root/scripts/backup.sh
+
+- name: restart osad
+  service: name=osad enabled=yes state=restarted
+  tags: ['spacewalk']
+
+- name: restart lacework
+  service: name=datacollector enabled=yes state=restarted
+  tags: ['lacework']

@@ -1,0 +1,7 @@
+{% for share in nfs_shares %}
+{% set all_clients = [] %}
+{% for client in share.clients %}
+{% set tmp = all_clients.append( client.name + "(" + client.permission + ") " ) %}
+{% endfor %}
+{{ share.path }} {{ all_clients|join(" ") }}
+{% endfor %}

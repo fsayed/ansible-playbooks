@@ -1,0 +1,7 @@
+{% if datacenter not in ('cn1','cn2','lab') %}
+[puppet]
+name={{ ansible_distribution }} {{ ansible_distribution_version }} - Puppet Enterprise
+baseurl={{ puppet_yum_base_url }}/pe-puppet-{{ pe_version }}/{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/
+gpgcheck=0
+enabled=0
+{% endif %}

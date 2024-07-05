@@ -1,0 +1,41 @@
+- name: Install nslcd (nss-pam-ldapd) packages
+  yum: 
+      name: 
+          - authconfig
+          - dbus
+          - nss-pam-ldapd
+          - oddjob-mkhomedir
+      state: present
+      update_cache: yes
+  when: ansible_os_family == 'RedHat'
+  tags: [ 'ldap', 'kerberos', 'nslcd' ]
+
+- name: Create /etc/syseng for SysEng specific config
+  file: dest=/etc/syseng state=directory mode=0700
+  tags: [ 'ldap', 'kerberos', 'nslcd' ]
+
+- name: Enable messagebus service
+  service: name=messagebus enabled=yes state=started
+  tags: [ 'ldap', 'kerberos', 'nslcd' ]
+
+- name: Enable oddjob service
+  service: name=oddjobd enabled=yes state=started
+  tags: [ 'ldap', 'kerberos', 'nslcd' ]
+
+- name: Configure LDAP and Kerberos
+  shell: creates=/etc/syseng/auth.configured /usr/sbin/authconfig --enableldap --enableldapauth --enableldaptls --enablelocauthorize --enablemkhomedir --ldapserver={{ ldap_uris|join(',')|replace('ldap://','') }} --ldapbasedn="{{ ldap_basedn }}" --passalgo=sha512 --enablekrb5 --krb5realm {{ krb5_realm }} --krb5kdc {{ krb5_kdcs|join(',') }} --krb5adminserver {{ krb5_admin_server }} --update && echo "PLEASE DO NOT DELETE THIS FILE UNLESS YOU KNOW WHAT YOU ARE DOING." >  /etc/syseng/auth.configured
+  when: ansible_os_family == 'RedHat'
+  notify: restart nslcd
+  tags: [ 'ldap', 'kerberos', 'nslcd' ]
+
+- name: Configure nslcd service
+  template: src=etc/nslcd.conf.j2 dest=/etc/nslcd.conf owner=root group=root mode=0600
+  notify: restart nslcd
+  when: ansible_os_family == 'RedHat'
+  tags: [ 'ldap', 'kerberos', 'nslcd' ]
+
+- name: Enable nslcd service
+  service: name=nslcd enabled=yes state=started
+  when: ansible_os_family == 'RedHat'
+  tags: [ 'ldap', 'kerberos', 'nslcd' ]
+

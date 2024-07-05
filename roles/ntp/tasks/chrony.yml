@@ -1,0 +1,19 @@
+- name: Install chrony package
+  yum: name=chrony state=present
+  when: ansible_os_family == 'RedHat'
+  tags: ['ntp', 'ntpd', 'chrony', 'chronyd']
+
+- name: Configure chrony environment
+  copy: src=etc/sysconfig/chronyd dest=/etc/sysconfig/chronyd owner=root group=root mode=0644
+  notify: restart chrony
+  tags: ['ntp', 'ntpd', 'chrony', 'chronyd']
+
+- name: Configure chrony service
+  template: src=etc/chrony.conf.j2 dest=/etc/chrony.conf owner=root group=root mode=0644
+  notify: restart chrony
+  tags: ['ntp', 'ntpd', 'chrony', 'chronyd']
+
+- name: Enable and start chrony service
+  service: name=chronyd enabled=yes state=started
+  tags: ['ntp', 'ntpd', 'chrony', 'chronyd']
+

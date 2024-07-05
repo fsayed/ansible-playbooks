@@ -1,0 +1,15 @@
+- name: Create /etc/cron.allow
+  template: src=etc/cron.allow.j2 dest=/etc/cron.allow owner=root group=root mode=0600
+  tags: ['cron-access', 'cron-acl', 'at-access', 'at-acl']
+
+- name: Create /etc/at.allow
+  template: src=etc/at.allow.j2 dest=/etc/at.allow owner=root group=root mode=0600
+  tags: ['cron-access', 'cron-acl', 'at-access', 'at-acl']
+
+- name: Ensure /etc/at.deny and /etc/cron.deny do not exist
+  file: path={{ item }} state=absent
+  with_items:
+      - /etc/at.deny
+      - /etc/cron.deny
+  tags: ['cron-access', 'cron-acl', 'at-access', 'at-acl']
+

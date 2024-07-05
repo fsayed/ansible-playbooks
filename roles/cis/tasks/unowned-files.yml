@@ -1,0 +1,4 @@
+- name: Setup cron to check for files/directories without ownership
+  copy: src=etc/cron.daily/unowned_files dest=/etc/cron.daily/unowned_files owner=root group=root mode=0700
+  tags: ['cis', 'hardening', 'security', 'noowner']
+

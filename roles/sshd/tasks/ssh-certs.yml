@@ -1,0 +1,34 @@
+- name: Ensure OpenSSH server is installed
+  package: name=openssh-server state=present
+  when: ansible_os_family == 'RedHat'
+  tags: ['ssh', 'sshd','openssh', 'ssh-cert']
+
+- name: Create user authorized files directory
+  file: path=/etc/ssh/keys state=directory owner=root group=root mode=0755
+  tags: ['ssh', 'sshd','openssh', 'ssh-cert']
+
+- name: Copy SSH CA certificate
+  copy: src=etc/ssh/users_ca.pub dest=/etc/ssh/ owner=root group=root mode=0640
+  notify: restart sshd
+  tags: ['ssh', 'sshd','openssh', 'ssh-cert']
+
+- name: Configure OpenSSH server
+  template: src=etc/ssh/sshd_config.{{ ansible_distribution_major_version }}.j2 dest=/etc/ssh/sshd_config owner=root group=root mode=0600
+  notify: restart sshd
+  when: ansible_os_family == 'RedHat'
+  tags: ['ssh', 'sshd','openssh', 'ssh-cert']
+
+- name: Validate sshd config
+  command: /usr/sbin/sshd -T -f /etc/ssh/sshd_config
+  tags: ['ssh', 'sshd','openssh', 'ssh-cert']
+
+- name: Update Cloud admin user "{{ cloud.admin_username }}" authorized key location
+  import_tasks: cloud-admin-key.yml
+  when: ansible_distribution == 'CentOS' and datacenter in ['aws1', 'aws2', 'au2', 'donuts', 'usw1']
+  tags: ['ssh', 'sshd','openssh', 'ssh-cert']
+
+- name: Ensure OpenSSH server is enabled
+  service: name=sshd state=started enabled=yes
+  when: ansible_os_family == 'RedHat'
+  tags: ['ssh', 'sshd','openssh', 'ssh-cert']
+

@@ -1,0 +1,61 @@
+---
+vcenter:
+    au1: 
+        server: 'vcsa1.au1.afilias-ops.info'
+        datacenter: 'au1.afilias-ops.info'
+        cluster: 'Cluster 1'
+        template: 'centos-7-x86_64-template'
+        datastore: 'silverstore1-v5k1'
+    tor: 
+        server: 'yvc1.afilias-ops.local'
+        datacenter: 'Toronto Office'
+        cluster: '4141 Cluster'
+        template: 'centos-7-x86_64-template'
+        datastore: 'silverstore3'
+    stg: 
+        server: 'stg-vc1.afilias-ops.local'
+        datacenter: 'stg.afilias-ops.info'
+        cluster: 'Generic Cluster'
+        template: 'centos-7-x86_64-template'
+        datastore: 'silverstore1-v5k1'
+    on1: 
+        server: 'on1-vc1.afilias-ops.local'
+        datacenter: 'on1.afilias-ops.info'
+        cluster: 'Cluster 1'
+        template: 'centos-7-x86_64-template'
+        datastore: 'silverstore1-v5k1'
+    tx1: 
+        server: 'tx1-vc1.afilias-ops.local'
+        datacenter: 'tx1.afilias-ops.info'
+        cluster: 'Generic Cluster'
+        template: 'centos-7-x86_64-template'
+        datastore: 'silverstore1-v5k1'
+    cn1: 
+        server: 'vcsa1.cn1.afilias-ops.info'
+        datacenter: 'cn1.afilias-ops.info'
+        cluster: 'Cluster 1'
+        template: 'centos-7-x86_64-template'
+        datastore: 'bronzestore1'
+    cn2: 
+        server: 'vcsa1.cn2.afilias-ops.info'
+        datacenter: 'cn2.afilias-ops.info'
+        cluster: 'Cluster 1'
+        template: 'centos-7-x86_64-template'
+        datastore: 'bronzestore1'
+
+vmware:
+    server: "{{ vcenter[datacenter]['server'] }}"
+    datacenter: "{{ vcenter[datacenter]['datacenter'] }}"
+    cluster: "{{ vcenter[datacenter]['cluster'] }}"
+    template: "{{ vcenter[datacenter]['template'] }}"
+    datastore: "{{ vcenter[datacenter]['datastore'] }}"
+
+    vm:
+        num_cpus: 1
+        num_cpu_cores_per_socket: 1
+        scsi: paravirtual
+        hotadd_cpu: True
+        hotremove_cpu: True
+        hotadd_memory: True
+        folder:
+

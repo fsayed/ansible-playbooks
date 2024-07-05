@@ -1,0 +1,67 @@
+- name: Install openldap client packages
+  yum: name="openldap-clients" state=present update_cache=yes
+  when: ansible_os_family == 'RedHat'
+  tags: ['ldap', 'ldap-client', 'openldap', 'openldap-client']
+      
+- name: Create openldap certificate directory
+  file: dest=/etc/openldap/certs mode=755 owner=root group=root state=directory
+  tags: ['ldap', 'ldap-client', 'openldap', 'openldap-client']
+
+- name: Setup CA certificate
+  copy: src={{ ldap_cacert_file }} dest=/etc/openldap/certs/cacert.crt mode=0644 owner=root group=root
+  tags: ['ldap', 'ldap-client', 'openldap', 'openldap-client']
+
+- name: Create openldap client config file
+  template: src=etc/openldap/ldap.conf.j2 dest=/etc/openldap/ldap.conf mode=0644 owner=root group=root
+  tags: ['ldap', 'ldap-client', 'openldap', 'openldap-client']
+
+- name: Install pam_ldap package
+  yum: name="pam_ldap" state=present update_cache=yes
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int <= 6 and ldap_client_type == 'nslcd'
+  tags: ['ldap', 'ldap-client', 'openldap', 'openldap-client']
+
+- name: Create pam_ldap client config file (nslcd client)
+  template: src=etc/pam_ldap.conf.j2 dest=/etc/pam_ldap.conf mode=0644 owner=root group=root
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int <= 6 and ldap_client_type == 'nslcd'
+  tags: ['ldap', 'ldap-client', 'openldap', 'openldap-client']
+
+# ldapsearch always returns 0 (found or not found), grep/wc comes to rescure :)
+# wc always prints out 0 or greater, and its rc code is always 0, so it won't cause ansible error :)
+- name: Checking if host has been added to LDAP
+  shell: ldapsearch -ZxLLLb {{ ldap_hostaccessdn }} -H ldaps://{{ ldap_master }} cn={{ inventory_hostname }} | grep -i {{ inventory_hostname }} | wc -l
+  register: ldap_entry_found
+  when: noldapentry is undefined
+  changed_when: no
+  tags: ['ldap', 'ldap-client', 'openldap', 'openldap-client']
+
+# For now, we won't update anything if the host entry is already exist and the datacenter is cn1/cn2/lab 
+- name: Copy service keytab
+  shell: echo "{{ service_keytab }}" | base64 -d > "/tmp/{{ datacenter }}-service.keytab"
+  when: ( noldapentry is undefined ) and ( not ldap_entry_found.stdout|int )
+  ignore_errors: "{{ ansible_check_mode }}"
+  tags: ['ldap', 'ldap-client', 'openldap', 'openldap-client']
+
+- name: Prepare host LDIF file
+  template: src=host.ldif.j2 dest=/tmp/{{ inventory_hostname }}.ldif lstrip_blocks=yes mode=0644 owner=root group=root
+  when: ( noldapentry is undefined ) and ( not ldap_entry_found.stdout|int )
+  ignore_errors: "{{ ansible_check_mode }}"
+  tags: ['ldap', 'ldap-client', 'openldap', 'openldap-client']
+
+- name: Add LDAP host entry
+  shell: kinit -k -t "/tmp/{{ datacenter }}-service.keytab" {{ service_principal }} && ldapadd -f /tmp/{{ inventory_hostname }}.ldif -H ldaps://{{ ldap_master }}
+  when: ( noldapentry is undefined ) and ( not ldap_entry_found.stdout|int )
+  ignore_errors: "{{ ansible_check_mode }}"
+  tags: ['ldap', 'ldap-client', 'openldap', 'openldap-client']
+
+- name: Remove service keytab
+  file: path="/tmp/{{ datacenter }}-service.keytab" state=absent
+  when: ( noldapentry is undefined ) and ( not ldap_entry_found.stdout|int )
+  ignore_errors: "{{ ansible_check_mode }}"
+  tags: ['ldap', 'ldap-client', 'openldap', 'openldap-client']
+
+- name: Remove host LDIF file
+  file: path=/tmp/{{ inventory_hostname }}.ldif  state=absent
+  when: ( noldapentry is undefined ) and ( not ldap_entry_found.stdout|int )
+  ignore_errors: "{{ ansible_check_mode }}"
+  tags: ['ldap', 'ldap-client', 'openldap', 'openldap-client']
+

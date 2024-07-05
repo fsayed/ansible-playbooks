@@ -1,0 +1,9 @@
+- name: Ensure postfix is installed
+  package: name=postfix state=present
+  tags: ['hardening', 'security', 'email', 'postfix', 'smtp', 'smtpd']
+
+- name: Ensure postfix listens on localhost only
+  lineinfile: path=/etc/postfix/main.cf regexp='^inet_interfaces' line='inet_interfaces = loopback-only'
+  notify: restart postfix
+  tags: ['hardening', 'security', 'email', 'postfix', 'smtp', 'smtpd']
+

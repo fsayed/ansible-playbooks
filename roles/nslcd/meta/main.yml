@@ -1,0 +1,4 @@
+dependencies:
+    - { role: krb5-client, when: "ansible_os_family == 'RedHat'" }
+    - { role: openldap-client, when: "ansible_os_family == 'RedHat'" }
+

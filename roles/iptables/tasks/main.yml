@@ -1,0 +1,29 @@
+- name: Stop, disable and mask firewalld
+  systemd: name=firewalld state=stopped enabled=no masked=yes
+  ignore_errors: yes
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 7
+  tags: ['iptables', 'firewall']
+
+- name: Install iptables
+  package: name=iptables state=present
+  when: ansible_os_family == 'RedHat'
+  tags: ['iptables', 'firewall']
+
+- name: Install iptables-services
+  yum:
+      name:
+          - iptables
+          - iptables-services
+      state: latest
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 7
+  tags: ['iptables', 'firewall']
+
+- name: Setup iptables rules
+  template: src=etc/sysconfig/iptables.j2 dest=/etc/sysconfig/iptables owner=root group=root mode=0600
+  notify: restart iptables
+  tags: ['iptables', 'firewall']
+
+- name: Start and enable iptables service
+  service: name=iptables state=started enabled=yes
+  tags: ['iptables', 'firewall']
+

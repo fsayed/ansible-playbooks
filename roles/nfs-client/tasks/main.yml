@@ -1,0 +1,27 @@
+---
+# tasks file for nfs-client
+
+- name: Install NFS client package
+  yum:
+    name: nfs-utils
+    state: present
+  tags: ['nfs-client']
+
+- name: Mount NFS filesystem
+  mount:
+    path: "{{ item.path }}"
+    src: "{{ item.src }}"
+    opts: "{{ item.opts | default(nfs_client_mount_opts) }}"
+    state: mounted
+    fstype: nfs4
+  with_items: "{{ nfs_client_mounts }}"
+  tags: ['nfs-client']
+
+- name: Create symlink to NFS mount
+  file:
+    src: "{{ item.path }}"
+    dest: "{{ item.symlink_dest }}"
+    state: link
+  with_items: "{{ nfs_client_mounts }}"
+  when: ( item.symlink_dest is defined )
+  tags: ['nfs-client']

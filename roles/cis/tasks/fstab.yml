@@ -1,0 +1,62 @@
+- name: Create /media/cdrom (Blame Nawab on this! - CIS :)
+  file: path=/media/cdrom state=directory owner=root group=root mode=0755
+  tags: ['cis', 'hardening', 'security', 'fstab']
+
+- name: Checking /etc/fstab content
+  shell: cat /etc/fstab
+  changed_when: no
+  register: current_fstab
+  tags: ['cis', 'hardening', 'security', 'fstab']
+
+- name: Auditing /etc/fstab
+  shell: > 
+      awk 'BEGIN { 
+             vartmp = 0; 
+             media = 0;
+             tmpfs = 0;
+             fs = "xfs"; 
+      } { 
+             if($2 == "/tmp") $4 = "defaults,rw,nodev,noexec,nosuid";
+             else if($2 == "/usr") $4 = "defaults,rw,nodev";
+             else if($2 == "/var") $4 = "defaults,rw,nosuid";
+             else if($2 == "/boot" || $2 == "/home" || $2 == "/var/log" || $2 == "/var/log/audit") $4 = "defaults,rw,nodev,noexec,nosuid";
+             else if($2 == "/opt") $4 = "defaults,rw,nodev,nosuid";
+             else if($2 == "/var/log/audit") $4 = "defaults,rw,nodev,noexec,nosuid";
+             else if($2 == "/dev/shm") { $4 = "defaults,rw,nodev,noexec,nosuid"; tmpfs++; }
+             else if($2 == "/var/tmp") { fs = $3; $4 = "defaults,rw,bind,nodev,noexec,nosuid"; vartmp++ ; }
+             else if($2 == "/media/cdrom") { $4 = "defaults,ro,nodev,noexec,nosuid,noauto"; media++; }
+             print;
+
+      } END {
+
+             if(vartmp == 0) 
+             {
+                 if(fs == "xfs")
+                   print "/tmp      		/var/tmp                none    defaults,rw,bind,nodev,noexec,nosuid        0 0";
+                 else if(fs == "ext3" || fs == "ext4")
+                   print "/tmp      		/var/tmp                none    defaults,rw,bind,nodev,noexec,nosuid        1 2";
+             }
+
+             if(tmpfs == 0) 
+             {
+                 print("tmpfs      		/dev/shm                tmpfs   defaults,rw,nodev,noexec,nosuid        0 0");
+             }
+
+             if(media == 0) 
+             {
+                 print("/dev/cdrom              /media/cdrom            iso9660 defaults,ro,noexec,nosuid,nodev,noauto        0 0");
+             }
+
+      }' /etc/fstab
+  changed_when: no
+  failed_when: no
+  register: new_fstab
+  tags: ['cis', 'hardening', 'security', 'fstab']
+
+- name: Modify /etc/fstab
+  copy: dest=/etc/fstab content={{ new_fstab.stdout + "\n" }} owner=root group=root mode=0644
+  when: current_fstab.stdout != ( new_fstab.stdout )
+  ignore_errors: "{{ ansible_check_mode }}"
+  notify: remount filesystems 
+  tags: ['cis', 'hardening', 'security', 'fstab']
+

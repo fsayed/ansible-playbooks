@@ -1,0 +1,143 @@
+{% set strip_trailing_newlines = False %}
+{% set nat_exist = [] %}
+{% if iptables_rules is defined %}
+{%- for rule in iptables_rules if rule.table is defined -%}
+{%- if rule.table == "nat" -%}
+{% set _ = nat_exist.append(1) %} 
+{%- endif -%}
+{%- endfor -%} 
+{% endif %}
+{% if nat_exist %}
+*nat
+:PREROUTING ACCEPT [35:4756]
+:INPUT ACCEPT [0:0]
+:OUTPUT ACCEPT [110:6632]
+:POSTROUTING ACCEPT [110:6632]
+{% for rule in iptables_rules if rule.table is defined %}
+{% if rule.table == "nat" %}
+{% set nat_rule = "-A " + rule.chain|string + " " %}
+{% if rule.in_inf is defined %}
+{% set nat_rule = nat_rule + "-i " + rule.in_inf|string + " " %}
+{% endif %}
+{% if rule.out_inf is defined %}
+{% set nat_rule = nat_rule + "-o " + rule.out_inf|string + " " %}
+{% endif %}
+{% if rule.src is defined %}
+{% set nat_rule = nat_rule + "-s " + rule.src|string + " " %}
+{% endif %}
+{% if rule.dst is defined %}
+{% set nat_rule = nat_rule + "-d " + rule.dst|string + " " %}
+{% endif %}
+{% if rule.comment is defined %}
+{% set nat_rule = nat_rule + "-m comment --comment " + '"' + rule.comment|string + '" ' %}
+{% endif %}
+{% if rule.proto is defined %}
+{% set nat_rule = nat_rule + "-p " + rule.proto|string + " -m " + rule.proto|string + " " %}
+{% endif %}
+{% if rule.chain in ["INPUT", "OUTPUT"] %}
+{% if rule.dport is defined %}
+{% if rule.dport is iterable %}
+{% if rule.dport is string %}
+{% if ":" in rule.dport %}
+{% set nat_rule = nat_rule + "-m multiport --dports " + rule.dport + " " %}
+{% else %}
+{% set nat_rule = nat_rule + "--dport " + rule.dport + " " %} 
+{% endif %}
+{% else %}
+{% set nat_rule = nat_rule + "-m multiport --dports " + rule.dport|join(',') + " " %}
+{% endif %}
+{% else %}
+{% set nat_rule = nat_rule + "--dport " + rule.dport|string + " " %}
+{% endif %}
+{% else %}
+{% set nat_rule = nat_rule + "-m state --state NEW " %}
+{% endif %}
+{% set nat_rule = nat_rule + "-j ACCEPT" %}
+{% elif rule.chain == "PREROUTING" %}
+{% if rule.dport is defined %}
+{% set nat_rule = nat_rule + "--dport " + rule.dport|string + " " %}
+{% endif %}
+{% if rule.to_port is defined %}
+{% set nat_rule = nat_rule + "-j REDIRECT --to-port " + rule.to_port|string %}
+{% elif rule.to is defined %}
+{% set nat_rule = nat_rule + "-j DNAT --to " + rule.to|string %}
+{% endif %}
+{% elif rule.chain == "POSTROUTING" %}
+{% if rule.to is defined %}
+{% set nat_rule = nat_rule + "-j SNAT --to " + rule.to|string %}
+{% else %}
+{% set nat_rule = nat_rule + "-j MASQUERADE" %}
+{% endif %}
+{% endif %}
+{{ nat_rule }}
+{% endif %}
+{% endfor %}
+COMMIT
+{% endif %}
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT DROP [0:0]
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A OUTPUT -o lo -j ACCEPT
+{% if iptables_filter_outbound is defined %}
+-A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -m icmp -p icmp --icmp-type any -m comment --comment "any ICMP" -j ACCEPT
+{% else %}
+-A OUTPUT -j ACCEPT
+{% endif %}
+-A INPUT -s 127.0.0.0/8 -j DROP
+{% if iptables_rules is defined %}
+{% for rule in iptables_rules %}
+{% if (rule.table is not defined) or (rule.table == "filter") %}
+{% set filter_rule = "-A INPUT " %}
+{% if rule.chain is defined %}
+{% set filter_rule = "-A " + rule.chain + " " %}
+{% endif %}
+{% if rule.in_inf is defined %}
+{% set filter_rule = filter_rule + "-i " + rule.in_inf|string + " " %}
+{% endif %}
+{% if rule.out_inf is defined %}
+{% set filter_rule = filter_rule + "-o " + rule.out_inf|string + " " %}
+{% endif %}
+{% if rule.src is defined %}
+{% set filter_rule = filter_rule + "-s " + rule.src|string + " " %}
+{% endif %}
+{% if rule.dst is defined %}
+{% set filter_rule = filter_rule + "-d " + rule.dst|string + " " %}
+{% endif %}
+{% if rule.proto is defined %}
+{% set filter_rule = filter_rule + "-p " + rule.proto|string + " -m state --state NEW -m " + rule.proto|string + " " %}
+{% endif %}
+{% if rule.dport is defined %}
+{% if rule.dport is iterable %}
+{% if rule.dport is string %}
+{% if ":" in rule.dport %}
+{% set filter_rule = filter_rule + "-m multiport --dports " + rule.dport + " " %}
+{% else %}
+{% set filter_rule = filter_rule + "--dport " + rule.dport + " " %}
+{% endif %}
+{% else %}
+{% set filter_rule = filter_rule + "-m multiport --dports " + rule.dport|join(',') + " " %}
+{% endif %}
+{% else %}
+{% set filter_rule = filter_rule + "--dport " + rule.dport|string + " " %}
+{% endif %}
+{% else %}
+{% set filter_rule = filter_rule + "-m state --state NEW " %}
+{% endif %}
+{% if rule.matchset_src is defined %}
+{% set filter_rule = filter_rule + "-m set --match-set " + rule.matchset_src|string + " src " %}
+{% endif %}
+{% if rule.comment is defined %}
+{% set filter_rule = filter_rule + "-m comment --comment " + '"' + rule.comment|string + '" ' %}
+{% endif %}
+{{ filter_rule }}-j ACCEPT
+{% endif %}
+{% endfor %}
+{% endif %}
+-A INPUT -j REJECT --reject-with icmp-host-prohibited
+-A FORWARD -j REJECT --reject-with icmp-host-prohibited
+COMMIT

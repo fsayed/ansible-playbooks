@@ -1,0 +1,38 @@
+- name: Disable NetworkManager service
+  service: name=NetworkManager enabled=no
+  when: "(datacenter not in ('aws1', 'aws2', 'au2', 'auqa', 'donuts', 'usw1')) and (ansible_os_family == 'RedHat')"
+  ignore_errors: yes
+  failed_when: no
+  tags: ['network', 'ifconfig', 'ip']
+
+- name: Enable network service
+  service: name=network enabled=yes
+  when: "(datacenter not in ('aws1', 'aws2', 'au2', 'auqa', 'donuts', 'usw1')) and (ansible_os_family == 'RedHat')"
+  tags: ['network', 'ifconfig', 'ip']
+
+- name: Configuring network interface(s)
+  template: src=etc/sysconfig/network-scripts/ifcfg-eth.j2 dest=/etc/sysconfig/network-scripts/ifcfg-eth{{ item.id }}
+  with_items: '{{interfaces}}'
+  when: "(datacenter not in ('aws1', 'aws2', 'au2', 'auqa', 'donuts','usw1')) and (ansible_os_family == 'RedHat') and interfaces"
+  notify: restart network
+  tags: ['network', 'ifconfig', 'ip']
+      
+- name: Configuring route(s) for each Ethernet interface
+  template: src=etc/sysconfig/network-scripts/route-eth.j2 dest=/etc/sysconfig/network-scripts/route-eth{{ item.id }}
+  with_items: '{{interfaces}}'
+  when: "(datacenter not in ('aws1', 'aws2', 'au2', 'auqa', 'donuts', 'usw1')) and (ansible_os_family == 'RedHat') and interfaces and item.routes is defined"
+  notify: restart network
+  tags: ['network', 'ifconfig', 'ip', 'route']
+      
+- name: Configuring route6(s) for each Ethernet interface
+  template: src=etc/sysconfig/network-scripts/route6-eth.j2 dest=/etc/sysconfig/network-scripts/route6-eth{{ item.id }}
+  with_items: '{{interfaces}}'
+  when: "(datacenter not in ('aws1', 'aws2', 'au2', 'auqa', 'donuts', 'usw1')) and (ansible_os_family == 'RedHat') and interfaces and item.routes6 is defined"
+  notify: restart network
+  tags: ['network', 'ifconfig', 'ip', 'route6']
+      
+- name: Disable IPv6 autoconf
+  lineinfile: dest=/etc/sysconfig/network regexp='^IPV6_AUTOCONF=' line='IPV6_AUTOCONF=no' owner=root group=root mode=0644
+  when: "(datacenter not in ('aws1', 'aws2', 'au2', 'auqa', 'donuts', 'usw1')) and (ansible_os_family == 'RedHat')"
+  notify: restart network
+  tags: ['network', 'ifconfig', 'ip', 'ipv6']

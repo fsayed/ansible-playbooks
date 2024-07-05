@@ -1,0 +1,4 @@
+# FIXME: Assume no EFI for now
+- name: generate grub2 config
+  command: grub2-mkconfig -o /boot/grub2/grub.cfg
+

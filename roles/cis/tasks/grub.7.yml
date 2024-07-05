@@ -1,0 +1,10 @@
+- name: Make sure grub2 config is secured
+  file: dest=/boot/grub2/grub.cfg owner=root group=root mode=0600
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 7
+  tags: ['cis', 'hardening', 'security', 'grub', 'grub2']
+
+- name: Configure grub2 password
+  copy: src=boot/grub2/user.cfg dest=/boot/grub2/user.cfg owner=root group=root mode=0600
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 7
+  tags: ['cis', 'hardening', 'security', 'grub', 'grub2']
+  

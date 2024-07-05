@@ -1,0 +1,3 @@
+{% for rule in hosts_allow %}
+{{ rule.daemon }}: {{ rule.client }}
+{% endfor %}

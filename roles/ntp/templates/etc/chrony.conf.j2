@@ -1,0 +1,19 @@
+{% for item in ntp_servers %}
+server {{ item }} iburst
+{% endfor %}
+stratumweight 0
+driftfile /var/lib/chrony/drift
+rtcsync
+makestep 10 3
+{% if inventory_hostname in groups['ops'] %}
+allow 10.0.0.0/8
+allow 172.25.0.0/16
+{% endif %}
+bindcmdaddress 127.0.0.1
+bindcmdaddress ::1
+keyfile /etc/chrony.keys
+commandkey 1
+generatecommandkey
+noclientlog
+logchange 0.5
+logdir /var/log/chrony

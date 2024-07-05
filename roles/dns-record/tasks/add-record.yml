@@ -1,0 +1,22 @@
+---
+- name: Register DNS record(s)
+  block:
+      - name: Prepare DNS data for BlueCat
+        tempfile:
+            state: file
+            suffix: tmp
+        register: dns_file
+
+      - lineinfile: 
+            dest: "{{ dns_file.path }}"
+            line: "{{ item  }}"
+        with_items: "{{ dns_data }}"
+  
+      - name: Create DNS records in BlueCat ...
+        local_action: shell scripts/bluecat/add_record {{ dns_file.path }}
+        become: no
+
+      - name: Clean up temporary file
+        file: path={{ dns_file.path }} state=absent
+  when: not ansible_check_mode
+

@@ -1,0 +1,69 @@
+---
+filesystems:
+    - { fs: "/boot", opts: "defaults,rw,nodev,noexec,nosuid" }
+    - { fs: "/tmp", opts: "defaults,rw,nodev,noexec,nosuid" }
+    - { fs: "/home", opts: "defaults,rw,nodev,noexec,nosuid" }
+    - { fs: "/opt", opts: "defaults,rw,nodev,nosuid" }
+    - { fs: "/var/log", opts: "defaults,rw,nodev,noexec,nosuid" }
+    - { fs: "/var/log/audit", opts: "defaults,rw,nodev,noexec,nosuid" }
+    - { fs: "/dev/shm", opts: "defaults,rw,nodev,noexec,nosuid" }
+    - { fs: "/var/tmp", opts: "defaults,rw,bind,nodev,noexec,nosuid" }
+
+sysctl_file: /etc/sysctl.d/98-hardening.conf
+
+password:
+    difok: 8
+    minlen: 14
+    minclass: 4
+    maxrepeat: 2
+    maxclassrepeat: 2
+    lcredit: -1
+    ucredit: -1
+    dcredit: -1
+    ocredit: -1
+    gecoscheck: 1
+    history: 5
+    maxdays: 90
+    mindays: 7
+    warnage: 14
+    inactive: 30
+    
+
+grub_password_hash: '$6$6OQGndm/jCoIDiBd$cR4cDfhb.WT/YwNMGlWpKOb9m8pxITgUHXwgSef1omV0jhh37FntB0nJmf1tbFNCPoUA6DVgkngf46jh6PbEO/'
+
+pam_faillock:
+    deny: 5
+    unlock_time: 900
+    fail_interval: 900
+  
+pam_pwquality:
+    retry: 3
+
+tcpwrappers_enabled: yes
+hosts_allow:
+    - { daemon: ALL, client: '127.0., [::1]' }
+    - { daemon: sshd, client: ALL }
+
+hosts_deny:
+    - { daemon: ALL, client: ALL }
+
+cron_access_enabled: yes
+cron_users:
+    - root
+    - nocmon
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22 }
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22 }
+     
+# Do not disable services or remove packages in the ignored lists
+cis:
+    disabled_services:
+        ignored: []
+    removed_packages:
+        ignored: []
+

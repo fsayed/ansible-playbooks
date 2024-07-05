@@ -1,0 +1,19 @@
+key "tor-adonis." {
+ algorithm hmac-md5;
+ secret "O/WZdBxyZi3zOTKWfWt04QdxTQwmQ9OYzTigygocc2r9wNGPunaHG+cr IDJ8H76Etxi0eYxwGFiIMI4iEqW/SQ==";
+};
+key VIEW12598
+{
+    algorithm "hmac-md5";
+    secret "xUaBdVyJIdLZf9EMTLXe1w==";
+};
+key VIEW27
+{
+    algorithm "hmac-md5";
+    secret "U4Ccyj8IpDPcukh40fiRcA==";
+};
+key VIEW12472
+{
+    algorithm "hmac-md5";
+    secret "9n/dhGXfz0j8WSAFgPpGEA==";
+};

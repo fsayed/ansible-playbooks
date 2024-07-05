@@ -1,0 +1,17 @@
+- name: Check if {{ outer_item.name }} is installed
+  shell: rpm -q {{ outer_item.package }}
+  args:
+      warn: no
+  failed_when: no
+  changed_when: no
+  register: rpm
+  when: ansible_os_family == 'RedHat'
+  tags: ['cis', 'hardening', 'security', 'services']
+
+- name: Ensure {{ outer_item.name }} service is not enabled
+  service: name={{ item }} state=stopped enabled=no
+  with_items: "{{ outer_item.services }}"
+  ignore_errors: "{{ ansible_check_mode }}"
+  when: (ansible_os_family == 'RedHat') and (rpm.rc == 0) and (item not in cis.disabled_services.ignored)
+  tags: ['cis', 'hardening', 'security', 'services']
+

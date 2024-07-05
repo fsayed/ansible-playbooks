@@ -1,0 +1,31 @@
+- import_role:
+      name: afilias-os
+      tasks_from: repo-extras
+  tags: ['qualys', 'qualys-agent']
+  
+- name: Install Qualys Cloud Agent
+  yum: name=qualys-cloud-agent enablerepo="afilias-extras" state=present update_cache=yes disable_gpg_check=yes
+  tags: ['qualys', 'qualys-agent']
+
+- name: Create /etc/sysconfig/qualys-cloud-agent file
+  template: src=etc/sysconfig/qualys-cloud-agent.j2 dest=/etc/sysconfig/qualys-cloud-agent owner={{ owner }} group={{ group }} mode=0644
+  when: datacenter != 'acs'
+  tags: ['qualys', 'qualys-agent']
+
+- name: Ensure /etc/syseng exists
+  file: path=/etc/syseng state=directory owner={{ owner }} group={{ group }} mode=0700
+  tags: ['qualys', 'qualys-agent']
+  
+- name: Configure Qualys Cloud Agent
+  shell: >
+      /usr/local/qualys/cloud-agent/bin/qualys-cloud-agent.sh ActivationId={{ activation_id }} CustomerId={{ customer_id }}
+      && touch /etc/syseng/qualys-cloud-agent.configured
+  args:
+    creates: /etc/syseng/qualys-cloud-agent.configured
+    warn: no
+  tags: ['qualys', 'qualys-agent', 'configure-qualys']
+
+- name: Enable and start Qualys Agent
+  service: name=qualys-cloud-agent state=restarted enabled=yes
+  tags: ['qualys', 'qualys-agent', 'restart-qualys-agent']
+

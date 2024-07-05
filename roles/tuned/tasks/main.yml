@@ -1,0 +1,21 @@
+- name: Install tuned
+  package: name=tuned state=present
+  tags: ['tuned']
+
+- name: Start and enable tuned
+  service: name=tuned state=started enabled=yes
+  tags: ['tuned']
+
+- name: Check current tuned profile
+  shell: tuned-adm active | awk '/^Current/ {print $NF}'
+  failed_when: no
+  changed_when: no
+  register: current_profile
+  tags: ['tuned']
+
+- name: Set tuned profile to '{{ tuned.profile }}'
+  command: tuned-adm profile {{ tuned.profile }}
+  when: tuned.profile != current_profile.stdout
+  ignore_errors: "{{ ansible_check_mode }}"
+  tags: ['tuned']
+  

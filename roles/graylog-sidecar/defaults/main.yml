@@ -1,0 +1,10 @@
+---
+graylog_api_url: https://logpilot.on1.afilias-ops.info:12900/api/
+graylog_server_api_token: kfokjtpk8r4dnhtab15j9e909hqq5vm86h844ps40so76vldafe
+graylog_user: graylog
+graylog_group: graylog
+graylog_gecos: Graylog Sidecar
+graylog_uid: 9988
+graylog_gid: 9988
+graylog_home: /var/lib/graylog
+graylog_shell: /bin/bash

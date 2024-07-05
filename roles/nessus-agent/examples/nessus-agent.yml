@@ -1,0 +1,5 @@
+---
+- hosts: all
+  roles:
+      - { role: nessus-agent, when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 6 }
+

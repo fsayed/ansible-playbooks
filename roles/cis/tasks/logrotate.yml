@@ -1,0 +1,4 @@
+- name: Ensure logrotate is installed
+  package: name=logrotate state=present
+  tags: ['hardening', 'security', 'logrotate']
+

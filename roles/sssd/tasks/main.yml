@@ -1,0 +1,43 @@
+- name: Install sssd packages
+  yum: 
+      name:
+          - authconfig
+          - dbus
+          - sssd
+          - sssd-client
+          - oddjob-mkhomedir
+      state: present
+      update_cache: yes
+  when: ansible_os_family == 'RedHat'
+  tags: [ 'ldap', 'kerberos', 'sssd' ]
+
+- name: Create /etc/syseng for SysEng specific config
+  file: dest=/etc/syseng state=directory mode=0700
+  tags: [ 'ldap', 'kerberos', 'sssd' ]
+
+- name: Enable messagebus service
+  service: name=messagebus enabled=yes state=started
+  tags: [ 'ldap', 'kerberos', 'sssd' ]
+
+- name: Enable oddjob service
+  service: name=oddjobd enabled=yes state=started
+  tags: [ 'ldap', 'kerberos', 'sssd' ]
+
+- name: Configure LDAP and Kerberos
+  shell: creates=/etc/syseng/auth.configured /usr/sbin/authconfig --enableldap --enablesssd --enablesssdauth --enablelocauthorize --enablemkhomedir --enablerfc2307bis --enablecachecreds --ldapserver={{ ldap_uris|join(',')|replace('ldap://','') }} --ldapbasedn="{{ ldap_basedn }}" --passalgo=sha512 --enablekrb5 --krb5realm {{ krb5_realm }} --krb5kdc {{ krb5_kdcs|join(',') }} --krb5adminserver {{ krb5_admin_server }} --update && echo "PLEASE DO NOT DELETE THIS FILE UNLESS YOU KNOW WHAT YOU ARE DOING." >  /etc/syseng/auth.configured
+  when: ansible_os_family == 'RedHat'
+  notify: restart sssd
+  tags: [ 'ldap', 'kerberos', 'sssd' ]
+
+- name: Configure sssd service
+  template: src=etc/sssd/sssd.conf.j2 dest=/etc/sssd/sssd.conf owner=root group=root mode=0600
+  notify: restart sssd
+  when: ansible_os_family == 'RedHat'
+  tags: [ 'ldap', 'kerberos', 'sssd' ]
+
+- name: Enable sssd service
+  service: name=sssd enabled=yes state=started
+  when: ansible_os_family == 'RedHat'
+  tags: [ 'ldap', 'kerberos', 'sssd' ]
+
+

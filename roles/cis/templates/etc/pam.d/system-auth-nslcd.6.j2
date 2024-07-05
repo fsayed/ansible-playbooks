@@ -1,0 +1,34 @@
+#%PAM-1.0
+# This file is auto-generated.
+# User changes will be destroyed the next time authconfig is run.
+auth        required      pam_env.so
+auth        [default=4 success=ok] pam_localuser.so
+auth        required      pam_faillock.so preauth audit silent deny={{ pam_faillock.deny }} unlock_time={{ pam_faillock.unlock_time }}
+auth        [success=1 default=bad] pam_unix.so try_first_pass
+auth        [default=die] pam_faillock.so authfail audit deny={{ pam_faillock.deny }} unlock_time={{ pam_faillock.unlock_time }}
+auth        sufficient    pam_faillock.so authsucc audit deny={{ pam_faillock.deny }} unlock_time={{ pam_faillock.unlock_time }}
+auth        requisite     pam_succeed_if.so uid >= 500 quiet
+auth        sufficient    pam_krb5.so try_first_pass
+auth        sufficient    pam_ldap.so try_first_pass
+auth        required      pam_deny.so
+
+account     required      pam_unix.so broken_shadow
+account     sufficient    pam_localuser.so
+account     sufficient    pam_succeed_if.so uid < 500 quiet
+account     [default=bad success=ok user_unknown=ignore] pam_ldap.so
+account     [default=bad success=ok user_unknown=ignore] pam_krb5.so
+account     required      pam_permit.so
+
+password    requisite     pam_cracklib.so try_first_pass retry=3 minlen={{ password.minlen }} dcredit={{ password.dcredit }} ucredit={{ password.ucredit }} ocredit={{ password.ocredit }} lcredit={{ password.lcredit }}
+password    sufficient    pam_unix.so sha512 shadow try_first_pass use_authtok remember={{ password.history }}
+password    sufficient    pam_krb5.so use_authtok
+password    sufficient    pam_ldap.so use_authtok
+password    required      pam_deny.so
+
+session     optional      pam_keyinit.so revoke
+session     required      pam_limits.so
+session     optional      pam_oddjob_mkhomedir.so umask=0077
+session     [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid
+session     required      pam_unix.so
+session     optional      pam_krb5.so
+session     optional      pam_ldap.so

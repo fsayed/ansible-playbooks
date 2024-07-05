@@ -1,0 +1,12 @@
+{
+    "tokens": { "AccessToken":"125c64e13892fabf69817da0e9807a216ee9e1f08955b75aebfb3931" },
+    "serverurl" : "https://api.lacework.net",
+{% if (internet_test is failed) %}
+    "proxyurl":"http://{{ qualys_proxy_server }}:31280",
+{% endif %}   
+    "tags":
+          {
+            "Location": "{{ datacenter }}",
+            "Env": "Prod"
+          }
+}

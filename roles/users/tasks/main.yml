@@ -1,0 +1,13 @@
+- name: Configuring local user(s)
+  user: name={{ item.username }} 
+        uid={{ item.uid }} 
+        password={{ item.password if item.password is defined else '!!' }} 
+        comment="{{item.comment if item.comment is defined else ''}}" 
+        group={{ item.group if item.group is defined else 'users' }} 
+        groups="{{ item.groups if item.groups is defined else '' }}"
+        home={{ item.home if item.home is defined else '/home/' + item.username }} 
+        shell={{ item.shell if item.shell is defined else '/bin/bash' }} 
+        state={{ item.state }}
+  with_items: "{{ local_users }}"
+  tags: ['user', 'group']
+

@@ -1,0 +1,12 @@
+- name: Set default umask to be more strict
+  shell: >
+      sed -i -e 's/umask 022/umask 027/g' -e 's/umask 002/umask 027/g' -e 's/umask 077/umask 027/g' /etc/bashrc ;
+      sed -i -e 's/umask 022/umask 027/g' -e 's/umask 002/umask 027/g' -e 's/umask 077/umask 027/g' /etc/csh.cshrc ;
+      sed -i -e 's/umask 022/umask 027/g' -e 's/umask 002/umask 027/g' -e 's/umask 077/umask 027/g' /etc/profile ;
+      sed -i -e 's/umask 022/umask 027/g' -e 's/umask 002/umask 027/g' /etc/init.d/functions ;
+      touch /etc/syseng/umask.configured
+  args:
+      creates: /etc/syseng/umask.configured
+      warn: no
+  tags: ['cis', 'hardening', 'security', 'umask']
+

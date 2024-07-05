@@ -1,0 +1,76 @@
+- name: Create graylog collector sidecar group
+  group: name={{ graylog_group }} gid={{ graylog_gid }}
+  tags: ['graylog-collector-sidecar']
+
+- name: Create graylog collector sidecar user
+  user: 
+      name: graylog
+      comment: "{{ graylog_gecos }}"
+      uid: "{{ graylog_uid }}"
+      group: "{{ graylog_group }}"
+      home: "{{ graylog_home }}"
+      shell: "{{ graylog_shell }}"
+      state: present
+  tags: ['graylog-collector-sidecar']
+
+- name: Install graylog sidecar
+  yum: name=collector-sidecar enablerepo=afilias-extras state=present
+  tags: ['graylog-collector-sidecar']
+
+- name: Install graylog sidecar service (EL6)
+  command: graylog-collector-sidecar -service install creates=/etc/init.d/collector-sidecar
+  when: ansible_distribution_major_version|int == 6
+  tags: ['graylog-collector-sidecar']
+
+- name: Install graylog sidecar service (EL7)
+  command: graylog-collector-sidecar -service install creates=/etc/systemd/system/collector-sidecar.service
+  when: ansible_distribution_major_version|int == 7
+  tags: ['graylog-collector-sidecar']
+
+- name: Customize startup script (EL6)
+  template: src=etc/init.d/collector-sidecar.j2 dest=/etc/init.d/collector-sidecar owner=root group=root mode=0755
+  when: ansible_distribution_major_version|int == 6
+  tags: ['graylog-collector-sidecar']
+
+- name: Customize startup script (EL7)
+  template: src=etc/systemd/system/collector-sidecar.service.j2 dest=/etc/systemd/system/collector-sidecar.service owner=root group=root
+  when: ansible_distribution_major_version|int == 7
+  notify: "{{ item }}"
+  with_items: 
+      - systemd daemon reload
+      - restart collector-sidecar
+  tags: ['graylog-collector-sidecar']
+
+- name: Create a collector ID
+  shell: creates=/etc/graylog/collector-sidecar/collector-id uuidgen > /etc/graylog/collector-sidecar/collector-id
+  tags: ['graylog-collector-sidecar']
+
+- name: Create a collector sidecar cache directory
+  file: path=/var/cache/graylog/collector-sidecar state=directory owner=graylog group=graylog mode=0750
+  tags: ['graylog-collector-sidecar']
+
+- name: Set graylog ownership
+  file: 
+      path: "{{ item }}"
+      state: directory 
+      owner: graylog 
+      group: graylog 
+      mode: u=rwX,g=rX,o-rwx
+      recurse: yes
+  with_items:
+      - /etc/graylog
+      - /var/log/graylog
+      - /var/run/graylog
+      - /var/cache/graylog
+      - /var/spool/collector-sidecar
+  tags: ['graylog-collector-sidecar']
+
+- name: Configure graylog sidecar
+  template: src=etc/graylog/collector-sidecar/collector_sidecar.yml.j2 dest=/etc/graylog/collector-sidecar/collector_sidecar.yml owner=graylog group=graylog mode=0640
+  notify: restart collector-sidecar
+  tags: ['graylog-collector-sidecar']
+
+- name: Start and enable graylog collector sidecar service
+  service: name=collector-sidecar state=started enabled=yes
+  tags: ['graylog-collector-sidecar']
+

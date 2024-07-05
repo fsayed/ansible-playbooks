@@ -1,0 +1,92 @@
+- name: setup spacewalk client repo
+  template: src=etc/yum.repos.d/{{ spacewalk_client_repo }}.j2 dest=/etc/yum.repos.d/spacewalk-client.repo owner=root group=root mode=0644
+  tags: [ spacewalk, spacewalk_repo ]
+
+- name: disable rhn plugin first
+  replace: dest=/etc/yum/pluginconf.d/rhnplugin.conf regexp='enabled = 1' replace='enabled = 0' backup=no
+  ignore_errors: yes
+  tags: spacewalk,spacewalk-disable 
+
+- name: install spacewalk tools
+  package:
+      name:
+          - rhn-client-tools
+          - rhn-check
+          - osa-common
+          - osad
+          - wget
+      state: present
+      disable_gpg_check: yes
+  tags: spacewalk,wget
+
+- name: fix for DA spacewalk in /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    regexp: '(?i)spacewalk'
+    line: '{{ hosts_DA_entry }}'
+    state: present
+  when: "(('db' in group_names) or ('dap' in group_names) or ('redis' in group_names)) and (datacenter not in ('tor', 'au2', 'aws1', 'aws2'))"
+  tags: spacewalk
+
+- name: install spacewalk master cert
+  copy: src={{ rhn_cert }} dest=/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT owner=root group=root mode=0644
+  tags: spacewalk,spacewalk-register
+
+- name: modify /etc/sysconfig/rhn/up2date
+  replace: dest=/etc/sysconfig/rhn/up2date regexp='writeChangesToLog=0' replace='writeChangesToLog=1' backup=no
+  tags: spacewalk
+
+- name: disable gpgcheck in /etc/yum/pluginconf.d/rhnplugin.conf
+  replace: dest=/etc/yum/pluginconf.d/rhnplugin.conf regexp='gpgcheck = 1' replace='gpgcheck = 0' backup=no
+  tags: spacewalk,gpgspacewalkdisable
+
+- name: enable plugin /etc/yum/pluginconf.d/rhnplugin.conf
+  replace: dest=/etc/yum/pluginconf.d/rhnplugin.conf regexp='enabled = 0' replace='enabled = 1' backup=no
+  tags: spacewalk,spacewalk-enable,spacewalk-register
+
+- name: check if registered with spacewalk
+  command: /usr/sbin/rhn_check
+  register: rhn_check
+  ignore_errors: yes
+  tags: spacewalk,spacewalk-register
+
+- name: register with spacewalk master wirh centos7 activation key
+  shell: /usr/sbin/rhnreg_ks --serverUrl=https://{{ spacewalk_server }}/XMLRPC --activationkey={{ activation_key_centos7 }} --force
+  tags: spacewalk,spacewalk-register
+  when: rhn_check.rc == 255 and ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+  notify: restart osad
+
+- name: register with spacewalk master wirh centos6 activation key
+  shell: /usr/sbin/rhnreg_ks --serverUrl=https://{{ spacewalk_server }}/XMLRPC --activationkey={{ activation_key_centos6 }} --force
+  tags: spacewalk,spacewalk-register
+  when: rhn_check.rc == 255 and ansible_distribution == "CentOS" and ansible_distribution_major_version == "6"
+  notify: restart osad
+
+- name: stop osad service, if started
+  service:
+    name: osad
+    state: stopped
+  ignore_errors: yes
+  tags: osad_restart
+
+- name: remove osad-auth.conf
+  file:
+    path: /etc/sysconfig/rhn/osad-auth.conf
+    state: absent
+  ignore_errors: yes
+  tags: osad_restart
+
+- name: start osad service, if not started
+  service:
+    name: osad
+    state: started
+  ignore_errors: yes
+  tags: osad_restart
+
+- name: check in with spacewalk
+  command: /usr/sbin/rhn_check
+  tags: spacewalk,checkin,spacewalk-register
+
+- name: proper permissions on /etc/logrotate.d/osad
+  file: path=/etc/logrotate.d/osad owner=root group=root mode=0644
+  tags: spacewalk

@@ -1,0 +1,18 @@
+- name: Lacework - Install datacollector agent
+  yum: name=lacework enablerepo="afilias-extras" state=present update_cache=yes disable_gpg_check=yes
+  tags: ['lacework']
+
+- name: Lacework - wait until /var/lib/lacework/config/ is created
+  wait_for:
+    path: /var/lib/lacework/config/
+  tags: ['lacework']
+
+- name: Lacework - set up config.json
+  template:
+     src: var/lib/lacework/config/config.json.j2
+     dest: /var/lib/lacework/config/config.json
+     owner: root
+     group: root
+     mode: 0640
+  notify: restart lacework
+  tags: ['lacework']

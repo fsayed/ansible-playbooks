@@ -1,0 +1,33 @@
+- name: Configure password quality on EL7
+  template: src=etc/security/pwquality.conf.j2 dest=/etc/security/pwquality.conf owner=root group=root mode=0644
+  when: ansible_distribution_major_version|int >= 7
+  tags: ['cis', 'hardening', 'security', 'password', 'pwquality']
+
+- name: Ensure password hashing algorithm is SHA-512
+  lineinfile: path=/etc/login.defs regexp='^ENCRYPT_METHOD' line='ENCRYPT_METHOD SHA512'
+  tags: ['cis', 'hardening', 'security', 'password', 'pwquality']
+
+- name: Update default user password policy
+  replace: dest=/etc/login.defs regexp='{{ item.regex }}' replace='{{ item.value }}'
+  with_items:
+    - { regex: '^(?=PASS_MAX_DAYS\b)(?=^(?!{{ password.maxdays }})).*$', value: 'PASS_MAX_DAYS   {{ password.maxdays }}' }
+    - { regex: '^(?=PASS_MIN_DAYS\b)(?=^(?!{{ password.mindays }})).*$', value: 'PASS_MIN_DAYS   {{ password.mindays }}' }
+    - { regex: '^(?=PASS_MIN_LEN\b)(?=^(?!{{ password.minlen }})).*$', value: 'PASS_MIN_LEN   {{ password.minlen }}' }
+    - { regex: '^(?=PASS_WARN_AGE\b)(?=^(?!{{ password.warnage }})).*$', value: 'PASS_WARN_AGE   {{ password.warnage }}' }
+  tags: ['cis', 'hardening', 'security', 'password', 'pwquality']
+
+- name: Enable failed log and add login delay
+  blockinfile:
+      path: /etc/login.defs
+      block: |
+        # Enable failed login logging
+        FAILLOG_ENAB yes
+    
+        # Delay between failed login (second)
+        FAIL_DELAY 4
+  tags: ['cis', 'hardening', 'security', 'password', 'pwquality']
+
+- name: Disable accounts {{ password.inactive }} days after password has expired
+  lineinfile: path=/etc/default/useradd regexp='^INACTIVE=' line='INACTIVE={{ password.inactive }}'
+  tags: ['cis', 'hardening', 'security', 'password', 'pwquality']
+

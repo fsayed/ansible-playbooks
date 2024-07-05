@@ -1,0 +1,16 @@
+# This check is for EL6 old initscripts package
+- name: Checking if /etc/sysctl.d is exist
+  stat: path=/etc/sysctl.d
+  register: sysctld
+  changed_when: no
+  when: ansible_distribution_major_version|int <= 6
+
+- name: Update EL6 initscripts package if needed
+  package: name=initscripts state=latest
+  when: ansible_distribution_major_version|int <= 6 and not sysctld.stat.exists
+
+- name: Enhance system and network security (tuning sysctl)
+  copy: src=etc/sysctl.d/hardening.conf dest="{{ sysctl_file }}" owner=root group=root mode=0644
+  notify: apply sysctl settings
+  tags: ['cis', 'hardening', 'security', 'sysctl']
+

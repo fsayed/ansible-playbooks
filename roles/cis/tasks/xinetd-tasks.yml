@@ -1,0 +1,15 @@
+- name: Check if {{ xinetd_service }} is enabled
+  shell: chkconfig --list 2>/dev/null | grep '{{ xinetd_service }}' | grep on | wc -l
+  args:
+      warn: no
+  failed_when: no
+  changed_when: no
+  register: chkconfig
+  tags: ['cis', 'hardening', 'security', 'services']
+
+- name: Ensure {{ xinetd_service }} service is not enabled
+  shell: chkconfig {{ xinetd_service }} off 2>/dev/null
+  ignore_errors: "{{ ansible_check_mode }}"
+  when: chkconfig.stdout|int > 0
+  tags: ['cis', 'hardening', 'security', 'services']
+

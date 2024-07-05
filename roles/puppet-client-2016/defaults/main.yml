@@ -1,0 +1,18 @@
+afilias_extras_repo_base_url: "{{repo_svr}}/project_repos/afilias-extras/"
+
+puppetmaster2016_datacenter:
+  cn1: pe-puppet1.cn1.afilias-ops.info
+  cn2: pe-puppet1.cn1.afilias-ops.info
+  ay1: pe-puppet1.cn1.afilias-ops.info
+  tor: pe-puppet1.tor.afilias-int.info
+  default: pe-puppet1.tor.afilias-int.info
+
+puppetmaster2016: "{{ puppetmaster2016_datacenter[datacenter] if puppetmaster2016_datacenter[datacenter] is defined else puppetmaster2016_datacenter['default'] }}"
+
+puppetmaster2016ca_datacenter:
+  cn1: pe-puppet1.cn1.afilias-ops.info
+  cn2: pe-puppet1.cn1.afilias-ops.info
+  ay1: pe-puppet1.cn1.afilias-ops.info
+  default: pe-puppet1.tor.afilias-int.info
+
+puppetmaster2016ca: "{{ puppetmaster2016ca_datacenter[datacenter] if puppetmaster2016ca_datacenter[datacenter] is defined else puppetmaster2016ca_datacenter['default'] }}"

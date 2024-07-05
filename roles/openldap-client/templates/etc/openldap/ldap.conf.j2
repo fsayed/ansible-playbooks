@@ -1,0 +1,4 @@
+URI {{ ldap_uris|join(' ') }}
+BASE {{ ldap_basedn }}
+TLS_CACERT /etc/openldap/certs/cacert.crt
+TLS_REQCERT never

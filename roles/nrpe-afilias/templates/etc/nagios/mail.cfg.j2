@@ -1,0 +1,8 @@
+command[check_eximailqueue]={{ nagios_plugins_dir }}/check_eximailqueue -w 1000 -c 2000 -v
+command[check_exim]={{ nagios_plugins_dir }}/check_tcp -H localhost -p 10025
+command[check_amavid]={{ nagios_plugins_dir }}/check_tcp -H localhost -p 10024
+command[check_spamassassin]={{ nagios_plugins_dir }}/check_tcp -H localhost -p 783
+command[check_inode]={{ nagios_plugins_dir }}/inodecheck.pl
+command[check_exim_process]={{ nagios_plugins_dir }}/check_procs -c 1: -u exim -C exim
+command[check_clam_process]={{ nagios_plugins_dir }}/check_procs -c 1: -u clamd -C clamd.exim
+command[check_panic]={{ nagios_plugins_dir }}/check_panic.pl /var/log/exim/panic.log

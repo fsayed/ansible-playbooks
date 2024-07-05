@@ -1,0 +1,98 @@
+- name: stop collector-sidecar service
+  service: name=collector-sidecar state=stopped
+  ignore_errors: True
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+
+- name: uninstall collector-sidecar package
+  yum: name=collector-sidecar state=absent
+  ignore_errors: True
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+
+
+- name: Create graylog sidecar group
+  group: name={{ graylog_group }} gid={{ graylog_gid }}
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+
+- name: Create graylog sidecar user
+  user: 
+      name: graylog
+      comment: "{{ graylog_gecos }}"
+      uid: "{{ graylog_uid }}"
+      group: "{{ graylog_group }}"
+      home: "{{ graylog_home }}"
+      shell: "{{ graylog_shell }}"
+      state: present
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+
+- name: Install collector (filebeat)
+  yum: name=filebeat enablerepo=afilias-extras state=present
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+
+- name: Stop and disable filebeat service
+  service: name=filebeat state=stopped enabled=no
+  ignore_errors: True
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+
+  
+- name: Install graylog sidecar
+  yum: name=graylog-sidecar enablerepo=afilias-extras state=present
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+
+- name: Install graylog sidecar service (EL6)
+  command: graylog-sidecar -service install creates=/etc/init.d/graylog-sidecar
+  when: ansible_distribution_major_version|int == 6
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+
+- name: Install graylog sidecar service (EL7)
+  command: graylog-sidecar -service install creates=/etc/systemd/system/graylog-sidecar.service
+  when: ansible_distribution_major_version|int == 7
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+
+- name: Customize startup script (EL6)
+  template: src=etc/init.d/graylog-sidecar.j2 dest=/etc/init.d/graylog-sidecar owner=root group=root mode=0755
+  when: ansible_distribution_major_version|int == 6
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+
+- name: Customize startup script (EL7)
+  template: src=etc/systemd/system/graylog-sidecar.service.j2 dest=/etc/systemd/system/graylog-sidecar.service owner=root group=root
+  when: ansible_distribution_major_version|int == 7
+  notify: "{{ item }}"
+  with_items: 
+      - systemd daemon reload
+      - restart graylog-sidecar
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+
+- name: Create a node ID
+  shell: creates=/etc/graylog/sidecar/node-id uuidgen > /etc/graylog/sidecar/node-id
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+
+- name: Create a graylog sidecar cache directory
+  file: path=/var/cache/graylog-sidecar state=directory owner=graylog group=graylog mode=0750
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+
+- name: Set graylog ownership
+  file: 
+      path: "{{ item }}"
+      state: directory 
+      owner: graylog 
+      group: graylog 
+      mode: u=rwX,g=rX,o-rwx
+      recurse: yes
+  with_items:
+      - /etc/graylog
+      - /var/lib/graylog-sidecar
+      - /var/log/graylog-sidecar
+      - /var/run/graylog-sidecar
+      - /var/cache/graylog-sidecar
+      - /var/spool/graylog-sidecar
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+
+- name: Configure graylog sidecar
+  template: src=etc/graylog/sidecar/sidecar.yml.j2 dest=/etc/graylog/sidecar/sidecar.yml owner=graylog group=graylog mode=0640
+  notify: restart graylog-sidecar
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+
+- name: Start and enable graylog collector sidecar service
+  service: name=graylog-sidecar state=started enabled=yes
+  tags: ['graylog-sidecar', 'graylog', 'sidecar']
+

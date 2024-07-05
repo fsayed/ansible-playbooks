@@ -1,0 +1,45 @@
+DEVICE=eth{{ item.id }}
+NAME=eth{{ item.id }}
+{% if item.type is defined %}
+TYPE={{ item.type }}
+{% else %}
+TYPE=Ethernet
+{% endif %}
+BOOTPROTO={{ item.bootproto }}
+NM_CONTROLLED=no
+{% if item.onboot %}
+ONBOOT=yes
+{% else %}
+ONBOOT=no
+{% endif %}
+{% if item.ipv6 %}
+IPV6INIT=yes
+{% if item.ip6 is defined %}
+IPV6ADDR={{ item.ip6 }}
+{% if item.ip6_aliases is defined %}
+IPV6ADDR_SECONDARIES="{{ item.ip6_aliases|join(' ') }}"
+{% endif %}
+{% if item.gateway6 is defined %}
+IPV6_DEFAULTGW={{ item.gateway6 }}
+{% endif %}
+{% endif %}
+{% else %}
+IPV6INIT=no
+{% endif %}
+{% if item.bootproto != 'dhcp' %}
+{% if item.ip is defined %}
+IPADDR={{ item.ip }}
+{% endif %}
+{% if item.prefix is defined %}
+PREFIX={{ item.prefix }}
+{% endif %}
+{% if item.gateway is defined %}
+GATEWAY={{ item.gateway }}
+{% endif %}
+{% if item.ip_aliases is defined %}
+{% for address in item.ip_aliases %}
+IPADDR{{ loop.index }}={{ address['ip'] }}
+PREFIX{{ loop.index }}={{ address['prefix'] }}
+{% endfor %}
+{% endif %}
+{% endif %}

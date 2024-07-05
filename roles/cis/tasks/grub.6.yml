@@ -1,0 +1,17 @@
+- name: Make sure grub config is secured
+  file: dest=/boot/grub/grub.conf owner=root group=root mode=0600
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int == 6
+  tags: ['cis', 'hardening', 'security', 'grub', 'grub2']
+
+- name: Check if grub password has already been set
+  shell: grep '^password' /boot/grub/grub.conf | wc -l
+  failed_when: no
+  changed_when: no
+  register: set_password
+  tags: ['cis', 'hardening', 'security', 'grub', 'grub2']
+
+- name: Configure grub password
+  lineinfile: path=/boot/grub/grub.conf insertafter='^default' line='password --encrypted {{ grub_password_hash }}'
+  when: (ansible_os_family == 'RedHat') and (ansible_distribution_major_version|int == 6) and (set_password.stdout|int == 0)
+  tags: ['cis', 'hardening', 'security', 'grub', 'grub2']
+  

@@ -1,0 +1,134 @@
+- name: Initial setup
+  import_tasks: init.yml
+  tags: ['cis', 'init']
+
+- name: Secure startup process
+  import_tasks: startup.yml
+  tags: ['cis', 'single', 'sulogin', 'sushell', 'startup', 'prompt']
+
+- name: Setup proper umask
+  import_tasks: umask.yml
+  tags: ['cis', 'umask']
+
+- name: Disable unused Kernel modules
+  import_tasks: kmod.yml
+  tags: ['cis', 'kmod', 'kernel', 'modprobe']
+
+- name: Secure Filesystems
+  import_tasks: fstab.yml
+  tags: ['cis', 'fstab']
+
+- name: Ensure sticky bit set on world writable directories
+  import_tasks: stickybit.yml
+  tags: ['cis', 'stickybit']
+
+- name: Control system limits
+  import_tasks: limits.yml
+  tags: ['cis', 'limits']
+
+- name: Setup kernel parameters
+  import_tasks: sysctl.yml
+  tags: ['cis', 'sysctl']
+
+- name: Disable Prelink
+  import_tasks: prelink.yml
+  tags: ['cis', 'prelink']
+
+- name: Secure user accounts
+  import_tasks: account.yml
+  tags: ['cis', 'account', 'pasword']
+
+- name: Enhance login security
+  import_tasks: pam.yml
+  tags: ['cis', 'pam']
+
+- name: Secure boot loader
+  include_tasks: "grub.{{ ansible_distribution_major_version }}.yml"
+  tags: ['cis', 'grub']
+
+- name: Ensure SELinux is installed and enabled
+  include_role:
+      name: selinux
+  vars:
+      state: enforcing
+  tags: ['cis', 'selinux']
+    
+- name: Remove some SELinux tools
+  import_tasks: setools.yml
+  tags: ['cis', 'selinux']
+
+- name: Ensure message of the day is configured properly
+  include_role:
+      name: motd
+  tags: ['cis', 'motd']
+
+- name: Ensure login banner is configured properly
+  import_tasks: issue.yml
+  tags: ['cis', 'issue']
+
+- name: Ensure some services are not disabled
+  import_tasks: services.yml
+  tags: ['service', 'systemctl', 'systemd']
+
+- name: Ensure some service clients are not installed
+  import_tasks: service-clients.yml
+  tags: ['cis', 'service', 'systemctl', 'systemd']
+
+- name: Ensure time synchronization is in use
+  include_role:
+      name: ntp
+  tags: ['cis', 'ntp', 'ntpd', 'chrony', 'chronyd']
+
+- name: Ensure syslog is installed and configured
+  include_role:
+      name: rsyslog
+  tags: ['cis', 'syslog', 'rsyslog', 'log']
+
+- name: Ensure logrotate is installed and configured
+  import_tasks: logrotate.yml
+  tags: ['cis', 'logrotate', 'log']
+
+- name: Ensure mail transfer agent is configured for local-only mode
+  import_tasks: mail.yml
+  tags: ['cis', 'mail', 'smtp', 'smtpd', 'postfix']
+
+- name: Ensure TCP Wrappers is installed and configured
+  include_role:
+      name: tcpwrappers
+  tags: ['cis', 'tcpwrappers', 'host-access']
+
+- name: Ensure IPtables is installed and configured
+  include_role:
+      name: iptables
+  when: iptables_enabled
+  tags: ['cis', 'iptables', 'firewall']
+
+- name: Ensure IPtables for IPv6 is installed and configured
+  include_role:
+      name: ip6tables
+  when: ip6tables_enabled
+  tags: ['cis', 'ip6tables', 'firewall']
+
+- name: Ensure Audit is installed and configured
+  include_role:
+      name: audit
+  tags: ['cis', 'audit', 'auditd']
+
+- name: Ensure cron is installed and configured
+  import_tasks: cron.yml
+  tags: ['cis', 'cron']
+
+- name: Ensure sshd is installed and configured
+  include_role:
+      name: sshd
+  tags: ['ssh', 'sshd']
+
+- name: System maintenance
+  import_tasks: maintenance.yml
+  tags: ['cis', 'maintenance']
+
+- name: Ensure AIDE is installed and configured
+  include_role:
+      name: aide
+  tags: ['cis', 'aide']
+

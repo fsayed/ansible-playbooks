@@ -1,0 +1,12 @@
+{% if datacenter not in ('lab') %}
+[afilias-extras]
+name={{ ansible_distribution }} {{ ansible_distribution_major_version }} - Afilias Extra Repo
+baseurl={{ repo_svr }}/project_repos/afilias-extras/{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/
+enabled=0
+gpgcheck=1
+{% if ansible_distribution == 'RedHat' %}
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+{% else %}
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}
+{% endif %}
+{% endif %}

@@ -1,0 +1,13 @@
+- name: Ensure service clients are not installed
+  include_tasks: remove-client.yml
+  loop:
+      - { name: "NIS", package: "ypbind" }
+      - { name: "RSH", package: "rsh" }
+      - { name: "TALK", package: "talk" }
+      - { name: "TELNET", package: "telnet" }
+      - { name: "LDAP", package: "openldap-clients" }
+  loop_control:
+      loop_var: client
+  when: ansible_os_family == 'RedHat' and (client.package not in cis.removed_packages.ignored)
+  tags: ['cis', 'hardening', 'security', 'services']
+

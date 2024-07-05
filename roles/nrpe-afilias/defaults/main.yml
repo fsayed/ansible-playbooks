@@ -1,0 +1,17 @@
+---
+
+nrpe_user: nagios
+
+nrpe_group: nagios
+
+nrpe_conf_dir: /etc/nagios
+
+home_dir: /opt/home/nagios
+
+nagios_plugins_dir: /usr/lib64/nagios/plugins
+
+nrpe_d_dir: /etc/nagios/nrpe.d
+
+nrpe_pid_dir: /var/run/nrpe
+
+

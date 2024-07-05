@@ -1,0 +1,12 @@
+---
+cloud:
+    admin_username: centos
+
+sshd_config: 
+    LogLevel: VERBOSE
+    MaxAuthTries: 8
+    LoginGraceTime: 60
+    ClientAliveInterval: 300
+    ClientAliveCountMax: 0
+    AuthorizedKeysFile: /etc/ssh/keys/%u/authorized_keys
+

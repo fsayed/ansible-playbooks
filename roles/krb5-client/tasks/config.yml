@@ -1,0 +1,31 @@
+- name: Create /etc/krb5.conf config file
+  template: src=etc/krb5.conf.j2 dest=/etc/krb5.conf mode=0644 owner=root group=root
+  tags: ['krb5', 'kerberos']
+
+- name: Create the service keytab
+  shell: echo "{{ service_keytab }}" | base64 -d > "/tmp/{{ datacenter }}-service.keytab"
+  when: nokrbprinc is undefined
+  tags: ['krb5', 'kerberos']
+
+- name: Checking if host has been added to Kerberos
+  shell: /usr/bin/kadmin -p "{{ service_principal }}" -k -t "/tmp/{{ datacenter }}-service.keytab" -q "getprinc host/{{ inventory_hostname }}" | grep -i "{{ inventory_hostname }}" | wc -l
+  register: krb_princ_found
+  when: nokrbprinc is undefined
+  changed_when: no
+  tags: ['krb5', 'kerberos']
+
+- name: Create Kerberos principal for the host
+  shell: echo "addprinc -randkey host/{{ inventory_hostname }}" | /usr/bin/kadmin -p "{{ service_principal }}" -k -t "/tmp/{{ datacenter }}-service.keytab" 
+  when: ( nokrbprinc is undefined ) and ( not krb_princ_found|bool )
+  tags: ['krb5', 'kerberos']
+
+- name: Export the host keytab
+  shell: echo "ktadd host/{{ inventory_hostname }}" | /usr/bin/kadmin -p "{{ service_principal }}" -k -t "/tmp/{{ datacenter }}-service.keytab" 
+  when: ( nokrbprinc is undefined ) and ( not krb_princ_found|bool )
+  tags: ['krb5', 'kerberos']
+
+- name: Delete the service keytab
+  file: path=/tmp/{{ datacenter }}-service.keytab state=absent
+  when: nokrbprinc is undefined
+  tags: ['krb5', 'kerberos']
+

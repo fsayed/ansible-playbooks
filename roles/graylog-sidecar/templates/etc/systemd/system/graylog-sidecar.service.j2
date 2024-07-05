@@ -1,0 +1,16 @@
+[Unit]
+Description=Wrapper service for Graylog controlled collector
+ConditionFileIsExecutable=/usr/bin/graylog-sidecar
+
+[Service]
+StartLimitInterval=5
+StartLimitBurst=10
+ExecStart=/usr/bin/graylog-sidecar
+User={{ graylog_user }}
+Group={{ graylog_group }}
+Restart=always
+RestartSec=120
+EnvironmentFile=-/etc/sysconfig/graylog-sidecar
+
+[Install]
+WantedBy=multi-user.target

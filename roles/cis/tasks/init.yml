@@ -1,0 +1,6 @@
+- name: Ensure /root/bin exists
+  file: dest=/root/bin state=directory owner=root group=root mode=0700
+
+- name: Create /etc/syseng for SysEng specific config
+  file: dest=/etc/syseng state=directory owner=root group=root mode=0700
+

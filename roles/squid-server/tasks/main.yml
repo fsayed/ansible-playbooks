@@ -1,0 +1,16 @@
+- name: Squid Proxy Server
+  yum: name=squid enablerepo="os" state=present update_cache=yes
+  tags: ['squid', 'squid-server']
+
+- name: create filter file
+  copy: src=etc/squid/allowed_sites.acl dest=/etc/squid/allowed_sites.acl owner=root group=root mode=0644
+  tags: ['squid', 'squid-server']
+
+- name: update squid.conf file
+  template: src=etc/squid/squid.conf.j2 dest=/etc/squid/squid.conf owner=root group=root mode=0644
+  tags: ['squid', 'squid-server']
+
+- name: Enable and start Squid Agent
+  service: name=squid state=restarted enabled=yes
+  tags: ['squid', 'squid-server', 'restart-squid']
+

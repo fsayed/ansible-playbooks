@@ -1,0 +1,8 @@
+- name: Ensure local login warning banner is configured properly
+  copy: src=etc/issue dest=/etc/issue owner=root group=root mode=0644
+  tags: ['cis', 'hardening', 'security', 'issue', 'banner', 'motd']
+
+- name: Ensure remote login warning banner is configured properly
+  copy: src=etc/issue dest=/etc/issue.net owner=root group=root mode=0644
+  tags: ['cis', 'hardening', 'security', 'issue', 'banner', 'motd']
+

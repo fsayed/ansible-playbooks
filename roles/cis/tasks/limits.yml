@@ -1,0 +1,4 @@
+- name: Ensure core dumps are restricted
+  copy: src=etc/security/limits.d/98-coredumps.conf dest=/etc/security/limits.d/98-coredumps.conf owner=root group=root mode=0644
+  tags: ['cis', 'hardening', 'security', 'limits']
+

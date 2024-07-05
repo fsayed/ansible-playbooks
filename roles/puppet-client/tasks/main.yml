@@ -1,0 +1,118 @@
+---
+- name: Check if pe-puppet has already been installed
+  stat: path=/opt/puppet/bin/puppet
+  register: puppet
+  changed_when: no
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+
+- name: Setup pe-puppet yum repo
+  template: src=etc/yum.repos.d/afilias-puppet.repo.j2 dest=/etc/yum.repos.d/afilias-puppet.repo owner=root group=root mode=0644
+  when: not puppet.stat.exists
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+
+- name: Create installer directory (for pe install/upgrade purpose)
+  file: dest=/etc/puppetlabs/installer state=directory owner=root group=root mode=0755 recurse=yes
+  when: not puppet.stat.exists
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+
+- name: Create puppet answers file(for pe install/upgrade purpose)
+  template: src=etc/puppetlabs/installer/answers.install.j2 dest=/etc/puppetlabs/installer/answers.install owner=root group=root mode=0600
+  when: not puppet.stat.exists
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+
+- name: Create facter directory (for pe install/upgrade purpose)
+  file: dest=/etc/puppetlabs/facter/facts.d state=directory owner=root group=root mode=0755 recurse=yes
+  when: not puppet.stat.exists
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+
+- name: Setup puppet facter
+  template: src=etc/puppetlabs/facter/facts.d/puppet_enterprise_installer.txt.j2 dest=/etc/puppetlabs/facter/facts.d/puppet_enterprise_installer.txt owner=root group=root mode=0644
+  when: not puppet.stat.exists
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+
+- name: Create main pe-puppet directory
+  file: dest=/opt/puppet state=directory owner=root group=root mode=0755 recurse=yes
+  when: not puppet.stat.exists
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+
+- name: Stamp pe-puppet version
+  copy: dest=/opt/puppet/pe_version content='{{ pe_version }}' owner=root group=root mode=0644
+  when: not puppet.stat.exists
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+
+- name: Install pe-puppet and dependencies
+  yum: name='{{ item }}' enablerepo=puppet state=present
+  with_items:
+    - pciutils
+    - libxml2
+    - dmidecode
+    - cronie
+    - net-tools
+    - redhat-lsb
+    - pe-puppet-enterprise-release
+    - pe-ruby
+    - pe-ruby-irb
+    - pe-ruby-libs
+    - pe-ruby-rdoc
+    - pe-ruby-ri
+    - pe-ruby-shadow
+    - pe-rubygems
+    - pe-rubygem-stomp
+    - pe-rubygem-stomp-doc
+    - pe-mcollective-common
+    - pe-mcollective
+    - pe-facter
+    - pe-puppet
+    - pe-augeas
+    - pe-augeas-libs
+    - pe-ruby-augeas
+    - pe-ruby-ldap
+    - pe-rubygem-hiera
+    - pe-rubygem-hiera-puppet
+  when: not puppet.stat.exists
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+
+- name: Configure pe-puppet
+  template: src=etc/puppetlabs/puppet/puppet.conf.j2 dest=/etc/puppetlabs/puppet/puppet.conf owner=root group=root mode=0600
+#  notify: restart pe-puppet
+  when: not puppet.stat.exists
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+
+- name: Setting up puppet agent
+  command: /opt/puppet/bin/puppet agent --no-daemonize --verbose --onetime --test --color=false
+  when: not puppet.stat.exists
+  ignore_errors: yes
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+
+- name: Signing puppet certificate
+  shell: puppet cert sign '{{ inventory_hostname }}'
+  delegate_to: '{{ puppetmaster }}'
+  when: not puppet.stat.exists
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+  
+- name: Install pe-man
+  copy: src=opt/puppet/bin/pe-man dest=/opt/puppet/bin/pe-man owner=root group=root mode=0755
+  when: not puppet.stat.exists
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+
+- name: Create pe-puppet symlinks to important binaries
+  file: src=/opt/puppet/bin/{{ item }} dest=/usr/local/bin/{{ item }} owner=root group=root state=link
+  with_items: ['facter', 'puppet', 'pe-man', 'hiera']
+  when: not puppet.stat.exists
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+
+- name: Create mcollective facts
+  shell: /opt/puppet/bin/facter --puppet --yaml > /etc/puppetlabs/mcollective/facts.yaml
+  when: not puppet.stat.exists
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+
+- name: Stop pe-puppet
+  service: name=pe-puppet state=stopped
+  when: not puppet.stat.exists
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+
+- name: Restart pe-mcollective
+  service: name=pe-mcollective state=restarted
+  when: not puppet.stat.exists
+  tags: ['puppet-client', 'puppet', 'pe-puppet']
+

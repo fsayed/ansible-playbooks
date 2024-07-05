@@ -1,0 +1,17 @@
+---
+nessus_groups:
+    au1: AU1
+    au2: AU2
+    default: AU_QA
+
+nessus_group: "{{ nessus_groups[datacenter] if nessus_groups[datacenter] is defined else nessus_groups['default'] }}"
+
+nessus_agent:
+# for external   
+#    server: 74.213.180.150
+# for internal
+    server: 10.10.40.24
+    server_port: 8834
+    key: 6d88af14ccf1b92fa3d2689b5c61bb7c0741ca8c0a835fb795bf199256456d20
+    groups: "{{ nessus_groups[datacenter] if nessus_groups[datacenter] is defined else nessus_groups['default'] }}"
+

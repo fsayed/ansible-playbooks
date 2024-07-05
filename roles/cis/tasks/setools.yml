@@ -1,0 +1,7 @@
+- name: Remove some SELinux tools
+  package: name={{ item }} state=absent
+  with_items:
+      - setroubleshoot
+      - mcstrans
+  when: ansible_os_family == 'RedHat'
+

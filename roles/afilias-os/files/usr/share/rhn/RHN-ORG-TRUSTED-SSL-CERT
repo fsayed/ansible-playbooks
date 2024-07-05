@@ -1,0 +1,95 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            d4:57:33:43:0b:79:0f:17
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=CA, ST=ON, L=Toronto, O=Afilias, OU=spacewalk1.tor.afilias-int.info, CN=spacewalk1.tor.afilias-int.info
+        Validity
+            Not Before: Aug  3 16:37:57 2018 GMT
+            Not After : Jan 17 16:37:57 2038 GMT
+        Subject: C=CA, ST=ON, L=Toronto, O=Afilias, OU=spacewalk1.tor.afilias-int.info, CN=spacewalk1.tor.afilias-int.info
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:9c:9f:08:f8:4e:77:30:11:88:85:b7:0b:73:64:
+                    60:96:d6:51:15:3f:62:6c:31:ae:85:e2:c1:5c:e4:
+                    95:71:d5:11:63:99:d2:47:35:2f:76:bb:d9:e6:cc:
+                    2f:4c:93:9d:34:36:ed:c1:9a:29:d1:79:d2:23:10:
+                    08:a7:c2:71:87:ba:8f:ef:1c:f4:a8:03:aa:7b:f8:
+                    88:3f:05:4f:32:58:54:58:2b:b9:98:9c:c9:3c:9d:
+                    0a:ad:ef:ef:3c:14:78:40:b1:af:7a:90:c6:a1:cc:
+                    24:80:cb:ad:63:f9:d9:52:39:e4:ad:ef:09:bf:b4:
+                    af:9e:db:37:8b:bb:1a:2d:65:b8:76:e5:9b:5a:6a:
+                    7f:48:29:64:15:61:c9:78:46:ae:c5:28:d4:27:31:
+                    dd:7e:b2:f3:de:aa:2a:75:aa:56:5d:54:65:65:12:
+                    ff:0c:b0:d3:e1:82:93:72:28:e8:5c:13:45:58:51:
+                    e2:11:be:59:9f:62:c6:9b:14:34:b5:74:df:31:80:
+                    0b:61:7b:6f:5e:80:b5:c1:ff:a8:95:b1:e1:61:7e:
+                    5e:b2:c7:ef:17:fd:7a:0f:19:14:e8:72:56:7f:bf:
+                    4a:e0:62:a4:22:28:2c:35:26:d6:34:25:47:3f:c0:
+                    87:e7:b0:c7:a2:fc:15:68:a8:2b:26:71:1f:a8:eb:
+                    d3:1d
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:TRUE
+            X509v3 Key Usage: 
+                Digital Signature, Key Encipherment, Certificate Sign
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication, TLS Web Client Authentication
+            Netscape Comment: 
+                RHN SSL Tool Generated Certificate
+            X509v3 Subject Key Identifier: 
+                BF:C3:0D:5A:EE:D9:AA:24:19:DC:D9:FA:92:56:6E:70:FB:B8:17:9C
+            X509v3 Authority Key Identifier: 
+                keyid:BF:C3:0D:5A:EE:D9:AA:24:19:DC:D9:FA:92:56:6E:70:FB:B8:17:9C
+                DirName:/C=CA/ST=ON/L=Toronto/O=Afilias/OU=spacewalk1.tor.afilias-int.info/CN=spacewalk1.tor.afilias-int.info
+                serial:D4:57:33:43:0B:79:0F:17
+
+    Signature Algorithm: sha256WithRSAEncryption
+         0e:66:e3:65:68:73:b5:ac:64:04:12:f4:4e:ba:ee:19:da:c2:
+         d5:ec:99:3f:97:66:74:44:f0:d7:54:ad:6c:0d:1d:4f:ec:f0:
+         ba:1a:de:14:84:ac:c0:f7:a7:a1:a7:da:3a:4c:20:a8:aa:a8:
+         27:59:e7:12:59:a5:36:f1:df:39:ea:e9:62:6c:20:75:ff:d7:
+         d5:48:d1:19:81:d6:61:ae:d5:96:9d:6f:c9:5f:8e:3b:ac:bf:
+         aa:70:97:b5:78:aa:b8:e9:17:35:e3:b6:2e:c9:1f:90:91:e4:
+         1c:36:a9:d8:77:bc:dc:83:31:93:be:c5:f6:71:67:86:13:24:
+         7b:cc:0e:9c:3c:70:34:cd:07:b5:05:e6:b8:b8:8a:63:6c:50:
+         dd:1d:dc:3a:40:00:08:fa:1e:aa:5c:e8:9a:7f:67:fe:e6:c0:
+         a5:6d:25:5c:07:7d:45:34:12:c3:1a:6b:ae:c6:31:17:10:ad:
+         61:37:d5:d4:d8:17:dd:37:47:13:ee:72:66:6e:a5:ba:f4:1d:
+         e9:42:5c:7c:b6:ca:85:5b:e9:18:11:fe:a7:f3:e8:cc:55:c4:
+         6d:12:1b:92:38:bb:5a:b4:ea:fd:10:a8:e7:ff:66:fb:e7:8c:
+         a2:de:40:16:df:20:58:41:8b:07:38:cd:ef:ec:55:51:e6:0b:
+         db:d6:7c:49
+-----BEGIN CERTIFICATE-----
+MIIFBTCCA+2gAwIBAgIJANRXM0MLeQ8XMA0GCSqGSIb3DQEBCwUAMIGSMQswCQYD
+VQQGEwJDQTELMAkGA1UECAwCT04xEDAOBgNVBAcMB1Rvcm9udG8xEDAOBgNVBAoM
+B0FmaWxpYXMxKDAmBgNVBAsMH3NwYWNld2FsazEudG9yLmFmaWxpYXMtaW50Lmlu
+Zm8xKDAmBgNVBAMMH3NwYWNld2FsazEudG9yLmFmaWxpYXMtaW50LmluZm8wHhcN
+MTgwODAzMTYzNzU3WhcNMzgwMTE3MTYzNzU3WjCBkjELMAkGA1UEBhMCQ0ExCzAJ
+BgNVBAgMAk9OMRAwDgYDVQQHDAdUb3JvbnRvMRAwDgYDVQQKDAdBZmlsaWFzMSgw
+JgYDVQQLDB9zcGFjZXdhbGsxLnRvci5hZmlsaWFzLWludC5pbmZvMSgwJgYDVQQD
+DB9zcGFjZXdhbGsxLnRvci5hZmlsaWFzLWludC5pbmZvMIIBIjANBgkqhkiG9w0B
+AQEFAAOCAQ8AMIIBCgKCAQEAnJ8I+E53MBGIhbcLc2RgltZRFT9ibDGuheLBXOSV
+cdURY5nSRzUvdrvZ5swvTJOdNDbtwZop0XnSIxAIp8Jxh7qP7xz0qAOqe/iIPwVP
+MlhUWCu5mJzJPJ0Kre/vPBR4QLGvepDGocwkgMutY/nZUjnkre8Jv7Svnts3i7sa
+LWW4duWbWmp/SClkFWHJeEauxSjUJzHdfrLz3qoqdapWXVRlZRL/DLDT4YKTcijo
+XBNFWFHiEb5Zn2LGmxQ0tXTfMYALYXtvXoC1wf+olbHhYX5essfvF/16DxkU6HJW
+f79K4GKkIigsNSbWNCVHP8CH57DHovwVaKgrJnEfqOvTHQIDAQABo4IBWjCCAVYw
+DAYDVR0TBAUwAwEB/zALBgNVHQ8EBAMCAqQwHQYDVR0lBBYwFAYIKwYBBQUHAwEG
+CCsGAQUFBwMCMDEGCWCGSAGG+EIBDQQkFiJSSE4gU1NMIFRvb2wgR2VuZXJhdGVk
+IENlcnRpZmljYXRlMB0GA1UdDgQWBBS/ww1a7tmqJBnc2fqSVm5w+7gXnDCBxwYD
+VR0jBIG/MIG8gBS/ww1a7tmqJBnc2fqSVm5w+7gXnKGBmKSBlTCBkjELMAkGA1UE
+BhMCQ0ExCzAJBgNVBAgMAk9OMRAwDgYDVQQHDAdUb3JvbnRvMRAwDgYDVQQKDAdB
+ZmlsaWFzMSgwJgYDVQQLDB9zcGFjZXdhbGsxLnRvci5hZmlsaWFzLWludC5pbmZv
+MSgwJgYDVQQDDB9zcGFjZXdhbGsxLnRvci5hZmlsaWFzLWludC5pbmZvggkA1Fcz
+Qwt5DxcwDQYJKoZIhvcNAQELBQADggEBAA5m42Voc7WsZAQS9E667hnawtXsmT+X
+ZnRE8NdUrWwNHU/s8Loa3hSErMD3p6Gn2jpMIKiqqCdZ5xJZpTbx3znq6WJsIHX/
+19VI0RmB1mGu1Zadb8lfjjusv6pwl7V4qrjpFzXjti7JH5CR5Bw2qdh3vNyDMZO+
+xfZxZ4YTJHvMDpw8cDTNB7UF5ri4imNsUN0d3DpAAAj6Hqpc6Jp/Z/7mwKVtJVwH
+fUU0EsMaa67GMRcQrWE31dTYF903RxPucmZupbr0HelCXHy2yoVb6RgR/qfz6MxV
+xG0SG5I4u1q06v0QqOf/ZvvnjKLeQBbfIFhBiwc4ze/sVVHmC9vWfEk=
+-----END CERTIFICATE-----

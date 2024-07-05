@@ -1,0 +1,13 @@
+uid nslcd
+gid ldap
+nss_initgroups_ignoreusers apache,bin,chrony,daemon,dbus,exim,ftp,ldap,lp,mail,nocmon,nmon,nobody,nscd,pandora,polkitd,postfix,root,splunk,sshd,sync,uucp
+base    {{ ldap_basedn }}
+uri     {{ ldap_uris|join(' ') }}
+tls_cacertfile	/etc/openldap/certs/cacert.crt
+ssl starttls
+timelimit	120
+bind_timelimit	120
+idle_timelimit	3600
+{% if ( ansible_os_family == 'RedHat' ) and ( ansible_distribution_major_version|int >= 7 ) %}
+pam_authz_search (&(objectClass=afiliasHost)(cn={{ inventory_hostname }})(member=uid=$username,{{ ldap_user_dn }}))
+{% endif %}

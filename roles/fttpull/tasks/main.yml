@@ -1,0 +1,76 @@
+---
+- block:
+
+  # make sure ipset role has been applied so that ipset tools are installed
+  - import_role:
+      name: ipset
+
+  - name: install required packages
+    package: name={{ item }} state=present
+    with_items:
+        - curl
+        - openssl
+        - coreutils
+
+  # create /opt/fttpull/ directory structure (maybe with log dir visible to everyone for monitoring?)
+  - name: create fttpull dir
+    file: path=/opt/fttpull owner=root group=root mode=0755 state=directory
+  - name: create fttpull log dir
+    file: path=/opt/fttpull/log owner=root group=root mode=0755 state=directory
+  - name: create fttpull log files
+    file: path=/opt/fttpull/log/fttpull-{{ item.ipset_name }}-{{ item.inet_family }}-{{ item.app_type }}-{{ item.complex }}.log owner=root group=root mode=0644 state=touch
+    with_items: "{{ fttpull }}"
+
+  # copy the fttpull.sh script to /opt/fttpull/ (permissions only for root because of aws account info inside)
+  - name: copy fttpull.sh script
+    copy: src=fttpull.sh dest=/opt/fttpull/fttpull.sh owner=root group=root mode=0700
+
+  # set up cronjob to run fttpull.sh as root at specified time
+  #m h  dom mon dow
+  - name: create a cronjob to run fttpull
+    cron:
+      name: "fttpull {{ item.ipset_name }}"
+      minute: "{{ item.cron_minute }}"
+      hour: "{{ item.cron_hour }}"
+      dom: "{{ item.cron_dom }}"
+      month: "{{ item.cron_month }}"
+      weekday: "{{ item.cron_weekday }}"
+      job: "/opt/fttpull/fttpull.sh {{ item.ipset_name }} {{ item.inet_family }} {{ item.app_type }} {{ item.complex }} >> /opt/fttpull/log/fttpull-{{ item.ipset_name }}-{{ item.inet_family }}-{{ item.app_type }}-{{ item.complex }}.log 2>&1"
+    with_items: "{{ fttpull }}"
+
+  # set up a @reboot cronjob so that fttpull is run at every boot
+  - name: create a reboot cronjob to run fttpull at every boot
+    cron:
+      name: "fttpull at reboot {{ item.ipset_name }}"
+      special_time: reboot
+      job: "/opt/fttpull/fttpull.sh {{ item.ipset_name }} {{ item.inet_family }} {{ item.app_type }} {{ item.complex }} >> /opt/fttpull/log/fttpull-{{ item.ipset_name }}-{{ item.inet_family }}-{{ item.app_type }}-{{ item.complex }}.log 2>&1"
+    with_items: "{{ fttpull }}"
+
+  #
+  # run fttpull.sh at the end of the role?
+
+
+  #vars
+
+  #fttpull:
+  #   - ipset_name: au_epp_ipv4
+  #     app_type: epp
+  #     complex: au
+  #     inet_family: inet
+  #     cron_minute: 0
+  #     cron_hour: 12
+  #     cron_dom: *
+  #     cron_month: *
+  #     cron_weekday: *
+
+  #   - ipset_name: au_epp_ipv6
+  #     app_type: epp
+  #     complex: au
+  #     inet_family: inet6
+  #     cron_minute: 0
+  #     cron_hour: 12
+  #     cron_dom: *
+  #     cron_month: *
+  #     cron_weekday: *
+
+  tags: ['fttpull']

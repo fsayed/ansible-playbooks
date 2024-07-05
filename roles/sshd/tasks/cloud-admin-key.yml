@@ -1,0 +1,14 @@
+- name: Create ssh directory for Cloud admin user "{{ cloud.admin_username }}"
+  file: path=/etc/ssh/keys/{{ cloud.admin_username }} state=directory owner=root group=root mode=0755
+  tags: ['cis', 'hardening', 'security', 'ssh', 'sshd','openssh', 'cloud', 'aws']
+
+- name: Copy Cloud admin user authorized keys to /etc/ssh/keys/{{ cloud.admin_username }}
+  copy: 
+      src: /home/{{ cloud.admin_username }}/.ssh/authorized_keys 
+      dest: /etc/ssh/keys/{{ cloud.admin_username }}/authorized_keys 
+      owner: "{{ cloud.admin_username }}"
+      group: root 
+      mode: 0400 
+      remote_src: yes
+  tags: ['cis', 'hardening', 'security', 'ssh', 'sshd','openssh', 'cloud', 'aws']
+

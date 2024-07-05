@@ -1,0 +1,50 @@
+- name: Install libselinux-python
+  yum: 
+      name:
+          - libselinux
+          - libselinux-python
+      state: present
+      update_cache: yes
+  when: ansible_os_family == 'RedHat'
+  tags: ['hardening', 'security', 'selinux']
+
+- name: Check SELinux state
+  command: getenforce
+  changed_when: no
+  register: semode
+  tags: ['hardening', 'security', 'selinux']
+
+- name: Set SELinux state
+  selinux: state={{ selinux.state }} policy=targeted
+  ignore_errors: "{{ ansible_check_mode }}"
+  when: ansible_os_family == 'RedHat' and (semode.stdout != 'Disabled')
+  tags: ['hardening', 'security', 'selinux']
+
+- name: Make sure SELinux state is permanent
+  lineinfile: path=/etc/selinux/config regexp='^SELINUX=' line='SELINUX={{ selinux.state }}'
+  tags: ['hardening', 'security', 'selinux']
+
+- name: Make sure SELinux policy is targeted
+  lineinfile: path=/etc/selinux/config regexp='^SELINUXTYPE=' line='SELINUXTYPE=targeted'
+  tags: ['hardening', 'security', 'selinux']
+
+- name: Check if system has been configured to relabel on next reboot
+  stat: path=/.autorelabel
+  register: autorelabel
+  changed_when: no
+  tags: ['hardening', 'security', 'selinux']
+  
+# We will relabel even if the current mode is permissive.
+- name: Relabeling SELinux label on reboot if need
+  file: path=/.autorelabel state=touch
+  ignore_errors: "{{ ansible_check_mode }}"
+  when: (ansible_os_family == 'RedHat') and (semode.stdout != 'Enforcing') and (not autorelabel.stat.exists)
+  tags: ['hardening', 'security', 'selinux']
+
+# If passing state is not disabled, we need to make sure SELinux is not disabled in grub.
+# We will check grub only when user wants to switch from SELinux disabled system to permissive/enforcing.
+# This means current mode is disabled and passing state is not disabled.
+- include_tasks: "grub.{{ ansible_distribution_major_version }}.yml"
+  ignore_errors: "{{ ansible_check_mode }}"
+  when: (ansible_os_family == 'RedHat') and (selinux.state != 'disabled') and (semode.stdout == 'Disabled')
+

@@ -1,0 +1,93 @@
+- name: Remove X Window System
+  shell:
+      yum -y remove xorg-x11\*
+  args:
+      warn: no
+  when: ansible_os_family == 'RedHat'
+  tags: ['cis', 'hardening', 'security', 'xorg']
+
+# In EL7 tftp appears on both under xinetd and tftp.socket
+- name: Ensure xinetd services are not enabled
+  include_tasks: xinetd-services.yml
+  loop:
+      - name: "INETD" 
+        package: "xinetd"
+        services:
+            - chargen-dgram
+            - chargen-stream
+            - daytime-dgram
+            - daytime-stream
+            - discard-dgram 
+            - discard-stream
+            - echo-dgram
+            - echo-stream
+            - time-dgram
+            - time-stream
+      - { name: "TFTP", package: "tftp-server", services: ["tftp"] }
+  loop_control:
+      loop_var: xinetd_item
+  when: ansible_os_family == 'RedHat'
+  tags: ['cis', 'hardening', 'security', 'xinetd']
+
+- name: Ensure additional xinetd services are not enabled on EL6
+  include_tasks: xinetd-services.yml
+  loop:
+      - name: "RSH" 
+        package: "rsh-server"
+        services:
+            - rexec
+            - rlogin
+            - rsh
+      - { name: "TELNET", package: "telnet-server", services: ["telnet"] }
+      - { name: "TALK", package: "telnet-server", services: ["talk", "ntalk"] }
+      - { name: "RSYNC", package: "rsync", services: ["rsync"] }
+  loop_control:
+      loop_var: xinetd_item
+  when: (ansible_os_family == 'RedHat') and (ansible_distribution_major_version|int == 6)
+  tags: ['cis', 'hardening', 'security', 'xinetd']
+
+- name: Ensure some systemd services are not enabled on EL7
+  include_tasks: systemd-services.yml
+  loop:
+      - name: "RSH" 
+        package: "rsh-server"
+        services:
+            - rexec.socket
+            - rlogin.socket
+            - rsh.socket
+      - { name: "DNS(chroot)", package: "bind-chroot", services: ["named-chroot"] }
+      #- { name: "NFS", package: "nfs-utils", services: ["nfs", "nfs-server", "rpcbind"] }
+      - { name: "NFS", package: "nfs-utils", services: ["nfs-server", "rpcbind.socket"] }
+      - { name: "TELNET", package: "telnet-server", services: ["telnet.socket"] }
+      - { name: "TFTP", package: "tftp-server", services: ["tftp.socket"] }
+      - { name: "TALK", package: "telnet-server", services: ["ntalk", "ntalk.socket"] }
+      - { name: "RSYNC", package: "rsync", services: ["rsyncd"] }
+  loop_control:
+      loop_var: systemd_item
+  when: (ansible_os_family == 'RedHat') and (ansible_distribution_major_version|int >= 7)
+  tags: ['cis', 'hardening', 'security', 'systemd']
+
+- name: Ensure some services are not enabled
+  include_tasks: service.yml
+  loop:
+      - { name: "INETD", package: "xinetd", services: ["xinetd"] }
+      - { name: "AutoFS", package: "autofs", services: ["autofs"] }
+      - { name: "Avahi", package: "avahi", services: ["avahi"] }
+      - { name: "CUPS", package: "cups", services: ["cups"] }
+      - { name: "DHCP", package: "dhcp", services: ["dhcpd"] }
+      - { name: "OpenLDAP", package: "openldap-servers", services: ["slapd"] }
+      - { name: "DNS", package: "bind", services: ["named"] }
+      - { name: "FTP", package: "vsftpd", services: ["vsftpd"] }
+      - { name: "HTTP", package: "httpd", services: ["httpd"] }
+      - { name: "IMAP/POP", package: "dovecot", services: ["dovecot"] }
+      - { name: "SAMBA", package: "samba", services: ["smb"] }
+      - { name: "HTTP PROXY", package: "squid", services: ["squid"] }
+      - { name: "SNMP", package: "net-snmp", services: ["snmpd"] }
+      - { name: "NIS", package: "ypserv", services: ["ypserv"] }
+      - { name: "NFS", package: "nfs-utils", services: ["nfs", "rpcbind"] }
+  loop_control:
+      loop_var: outer_item
+  when: ansible_os_family == 'RedHat'
+  tags: ['cis', 'hardening', 'security', 'services']
+
+

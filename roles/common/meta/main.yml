@@ -1,0 +1,35 @@
+---
+dependencies:
+    - { role: journald, when: ansible_distribution_major_version|int >= 7 }
+    - { role: network, when: "ansible_os_family == 'RedHat'" }
+    - { role: afilias-os }
+    - { role: audit, when: ansible_distribution_major_version|int >= 6 }
+    - { role: tuned, when: "ansible_os_family == 'RedHat'" }
+    - { role: selinux, when: "ansible_os_family == 'RedHat'" }
+    - { role: psacct }
+    - { role: sysstat }
+    - { role: logwatch }
+    - { role: ipset, when: ipset_set is defined }
+    - { role: fttpull, when: fttpull is defined }
+    - { role: iptables, when: ansible_os_family == 'RedHat' and iptables_enabled|bool }
+    - { role: ip6tables, when: ansible_os_family == 'RedHat' and ip6tables_enabled|bool }
+    - { role: tcpwrappers, when: tcpwrappers_enabled|bool }
+    - { role: cron-access, when: cron_access_enabled|bool }
+    - { role: ntp, when: "ansible_os_family == 'RedHat'" }
+    - { role: users, when: local_users is defined }
+    - { role: groups, when: local_groups is defined }
+    - { role: krb5-client, when: "ansible_os_family == 'RedHat'" }
+    - { role: openldap-client, when: "ansible_os_family == 'RedHat'" }
+    - { role: sssd, when: ansible_os_family == 'RedHat' and ldap_client_type == 'sssd' and local_user is not defined }
+    - { role: nslcd, when: ansible_os_family == 'RedHat' and ldap_client_type == 'nslcd' and local_user is not defined }
+    - { role: sudo }
+    - { role: pandora-agent }
+    - { role: sshd }
+    - { role: qualys-agent, when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 6 }
+    - { role: graylog-sidecar, when: graylog_sidecar is defined }
+    - { role: graylog-collector-sidecar, when: graylog_collector_sidecar is defined }
+    - { role: system-update, when: "ansible_os_family == 'RedHat'" }
+    - { role: nfs-client, when: nfs_client_mounts is defined }
+    - { role: systemd-logind, when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 7 }
+    - { role: cis, when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 6 }
+    - { role: aide }

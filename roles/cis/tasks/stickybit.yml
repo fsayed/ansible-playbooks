@@ -1,0 +1,16 @@
+- name: Looking for world writable directories without sticky bit set
+  shell: >
+      df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d -perm -0002 -not -perm -1000 2>/dev/null
+  changed_when: no
+  failed_when: no
+  register: result
+  ignore_errors: "{{ ansible_check_mode }}"
+  tags: ['cis', 'hardening', 'security', 'sticky']
+
+- name: Set sticky bit on world writable directories
+  shell: >
+      df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d -perm -0002 -not -perm -1000 2>/dev/null | xargs chmod a+t
+  when: result.stdout != ''
+  ignore_errors: "{{ ansible_check_mode }}"
+  tags: ['cis', 'hardening', 'security', 'sticky']
+

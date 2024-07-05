@@ -1,0 +1,27 @@
+{% if inventory_hostname in groups['ops'] %}
+tinker panic 0
+{% endif %}
+driftfile /var/lib/ntp/drift
+restrict -4 default kod nomodify notrap nopeer noquery
+restrict -6 default kod nomodify notrap nopeer noquery
+restrict 127.0.0.1
+restrict -6 ::1
+{% if inventory_hostname in groups['ops'] %}
+restrict 10.0.0.0 mask 255.0.0.0 nomodify notrap
+restrict 172.25.0.0 mask 255.255.0.0 nomodify notrap
+{% endif %}
+{% if inventory_hostname in groups['ops'] %}
+{% for item in ntp_servers %}
+server {{ item }} iburst
+{% endfor %}
+{% else %}
+{% for item in ntp_servers %}
+server {{ item }}
+{% endfor %}
+{% endif %}
+includefile /etc/ntp/crypto/pw
+keys /etc/ntp/keys
+{% if inventory_hostname in groups['ops'] %}
+disable monitor
+{% endif %}
+

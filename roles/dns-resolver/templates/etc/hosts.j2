@@ -1,0 +1,11 @@
+# Managed by Ansible
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+{% if etc_hosts is defined %}
+{% for entry in etc_hosts %}
+{% for ip in entry %}
+{{ ip }} {{ ' '.join(entry[ip]) }}
+{% endfor %}
+{% endfor %}
+{% endif %}

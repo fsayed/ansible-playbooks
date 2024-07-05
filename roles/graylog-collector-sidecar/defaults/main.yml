@@ -1,0 +1,11 @@
+---
+graylog_api_url: https://logpilot.on1.afilias-ops.info:12900/api/
+graylog_user: graylog
+graylog_group: graylog
+graylog_gecos: Graylog Collector Sidecar
+graylog_uid: 9988
+graylog_gid: 9988
+graylog_home: /var/lib/graylog
+graylog_shell: /bin/bash
+graylog_sidecar_tags:
+    - linux

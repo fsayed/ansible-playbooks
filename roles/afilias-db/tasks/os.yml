@@ -1,0 +1,15 @@
+---
+  - name: Increase number of processes for regular users
+    copy: src=etc/security/limits.d/90-nproc.conf dest=/etc/security/limits.d/90-nproc.conf owner=root group=root mode=0644
+
+  - name: Increase number of file handles and processes for regular users
+    copy: src=etc/security/limits.d/91-nofile.conf dest=/etc/security/limits.d/91-nofile.conf owner=root group=root mode=0644
+
+  - name: Increase semaphores
+    sysctl: name="kernel.sem" value="512 32000 64 256" sysctl_set=yes state=present
+    ignore_errors: True
+
+  - name: Change vm.swappiness
+    sysctl: name="vm.swappiness" value="10" sysctl_set=yes state=present
+    ignore_errors: True
+

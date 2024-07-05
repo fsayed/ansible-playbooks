@@ -1,0 +1,43 @@
+---
+- name: install rsync package
+  yum: name=rsync state=present
+  when: ansible_os_family == 'RedHat'
+  tags: backup
+
+- name: create scripts directory
+  file: path=/root/scripts state=directory owner=root group=root mode=0755
+  tags: backup
+
+- name: create ssh directory
+  file: path=/root/scripts/.ssh state=directory owner=root group=root mode=0700
+  tags: backup
+
+- name: generate RSA ssh keys
+  shell: /usr/bin/ssh-keygen -t rsa -C "{{ inventory_hostname }}" -f /root/scripts/.ssh/id_rsa -q -P ""
+  ignore_errors: True
+  tags: backup
+
+- name: print public ssh key
+  shell: cat /root/scripts/.ssh/id_rsa.pub
+  register: shell_result
+  tags: backup
+
+- debug:
+    var: shell_result.stdout_lines
+  tags: backup
+
+- pause: prompt="Copy over public ssh key and restart sshd on backup server."
+  tags: backup
+
+- name: configure backup.sh script
+  template: src=root/scripts/backup.sh.j2 dest=/root/scripts/backup.sh owner=root group=root mode=0750
+  tags: backup
+  notify: run backup
+
+- name: backup cron
+  cron: minute="{{ rsync_minute }}" hour={{ rsync_hour }} name="Backup cron - daily" user="root" job="/root/scripts/backup.sh > /dev/null"
+  tags: backup
+
+#- debug: 
+#    var: shell_result.stdout_lines
+#  tags: backup

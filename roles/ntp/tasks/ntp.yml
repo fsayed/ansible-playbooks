@@ -1,0 +1,19 @@
+- name: Install ntp package
+  yum: name=ntp state=present
+  when: ansible_os_family == 'RedHat'
+  tags: ['ntp', 'ntpd', 'chrony', 'chronyd']
+
+- name: Configure ntp service
+  template: src=etc/ntp.conf.j2 dest=/etc/ntp.conf
+  notify: restart ntp
+  tags: ['ntp', 'ntpd', 'chrony', 'chronyd']
+
+- name: Configure ntp step-tickers
+  template: src=etc/ntp/step-tickers.j2 dest=/etc/ntp/step-tickers
+  notify: restart ntp
+  tags: ['ntp', 'ntpd', 'chrony', 'chronyd']
+
+- name: Enable and start ntp service
+  service: name=ntpd enabled=yes state=started
+  tags: ['ntp', 'ntpd', 'chrony', 'chronyd']
+

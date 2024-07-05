@@ -1,0 +1,7 @@
+{% for route in item.routes %}
+{% if route['gateway']|ipaddr() %}
+{{ route['network'] }} via {{ route['gateway'] }}
+{% else %}
+{{ route['network'] }} dev {{ route['gateway'] }}
+{% endif %}
+{% endfor %}

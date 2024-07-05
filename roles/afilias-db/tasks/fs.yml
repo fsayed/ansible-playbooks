@@ -1,0 +1,80 @@
+- name: Install XFS utilities
+  yum: name=xfsprogs state=present update_cache=yes
+  tags: ['filesystem', 'fs']
+
+- name: Checking if the FILESYSTEM is already mounted ...
+  stat: path={{ mountpoint }}/.DO_NOT_DELETE
+  register: fs
+  changed_when: no
+  tags: ['filesystem', 'fs']
+
+- debug: msg="The FILESYSTEM already exists"
+  when: fs.stat.exists
+  tags: ['filesystem', 'fs']
+
+- name: Checking if the VOLUME GROUP exists ...
+  stat: path=/dev/{{ vg_name }}
+  register: vg
+  changed_when: no
+  tags: ['filesystem', 'fs']
+
+- debug: msg="The VOLUME GROUP already exists"
+  when: vg.stat.exists
+  tags: ['filesystem', 'fs']
+
+- name: Checking if the DISK is present ...
+  stat: path={{ pv_disk }}
+  register: dsk
+  changed_when: no
+  tags: ['filesystem', 'fs']
+
+- debug: msg="The {{ pv_disk }} DISK is not present"
+  when: not dsk.stat.exists
+  tags: ['filesystem', 'fs']
+
+- name: Creating the mount point
+  file: path={{ mountpoint }} state=directory mode=0755
+  when: not fs.stat.exists and not vg.stat.exists and dsk.stat.exists
+  tags: ['filesystem', 'fs']
+
+- name: Creating PHYSICAL VOLUME
+  command: /sbin/pvcreate {{ pv_disk }}
+  when: not fs.stat.exists and not vg.stat.exists and dsk.stat.exists
+  tags: ['filesystem', 'fs']
+
+- name: Creating VOLUME GROUP
+  command: /sbin/vgcreate {{ vg_name }} {{ pv_disk }}
+  when: not fs.stat.exists and not vg.stat.exists and dsk.stat.exists
+  tags: ['filesystem', 'fs']
+
+- name: Creating LOGICAL VOLUME
+  command: /sbin/lvcreate -l 100%FREE -n {{ lv_name }} {{ vg_name }}
+  when: not fs.stat.exists and not vg.stat.exists and dsk.stat.exists
+  tags: ['filesystem', 'fs']
+
+- name: Creating FILESYSTEM
+  command: /sbin/mkfs -t {{ fstype }} /dev/{{ vg_name }}/{{ lv_name }}
+  when: not fs.stat.exists and not vg.stat.exists and dsk.stat.exists
+  tags: ['filesystem', 'fs']
+
+- name: Creating an /etc/fstab entry
+  mount: name={{ mountpoint }} src=/dev/mapper/{{ vg_name }}-{{ lv_name }} fstype={{ fstype }} opts={{ fsopts }} state=present dump=0 passno=0
+  when: not fs.stat.exists and not vg.stat.exists and dsk.stat.exists
+  tags: ['filesystem', 'fs']
+
+- name: Mounting the FILESYSTEM
+  mount: name={{ mountpoint }} src=/dev/mapper/{{ vg_name }}-{{ lv_name }} fstype={{ fstype }} opts={{ fsopts }} state=mounted dump=0 passno=0
+  when: not fs.stat.exists and not vg.stat.exists and dsk.stat.exists
+  tags: ['filesystem', 'fs']
+
+- name: Marking the FILESYSTEM as created
+  file: path={{ mountpoint }}/.DO_NOT_DELETE state=touch
+  when: not fs.stat.exists and not vg.stat.exists and dsk.stat.exists
+  tags: ['filesystem', 'fs']
+
+- name: Set postgres as the owner of the filesystem
+  file: path={{ mountpoint }} state=directory owner=postgres group=postgres mode="u=rwx,g=rx,o=rx"
+  when: not fs.stat.exists and not vg.stat.exists and dsk.stat.exists
+  tags: ['filesystem', 'fs']
+
+
