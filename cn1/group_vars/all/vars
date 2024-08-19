@@ -1,0 +1,159 @@
+---
+datacenter: cn1
+dns_search: cn1.afilias-ops.info afilias-ops.info
+dns_servers:
+   - 10.115.0.154
+   - 10.115.0.155
+
+ntp_servers:
+   - 10.115.0.154
+   - 10.115.0.155
+
+# LDAP
+ldap_client_type: sssd
+
+ldap_cacert_file: etc/openldap/certs/cn1-cacert.crt
+
+ldap_basedn: dc=afilias,dc=info
+
+ldap_user_dn: ou=users,dc=afilias,dc=info
+
+ldap_group_dn: ou=groups,dc=afilias,dc=info
+
+ldap_master: ldap3.cn1.afilias-ops.info
+
+ldap_uris:
+   - ldap://ldap3.cn1.afilias-ops.info
+   - ldap://ldap4.cn1.afilias-ops.info
+
+ldap_hostaccessdn: ou=hostAccess,ou=services,dc=afilias,dc=info
+
+# Kerberos
+domain_realm: cn1.afilias-ops.info
+krb5_realm: AFILIAS.CN
+krb5_admin_server: kerberos.cn1.afilias-ops.info
+krb5_kdcs:
+   - ops3.cn1.afilias-ops.info
+   - ops4.cn1.afilias-ops.info
+
+krb5_domains:
+   - cn1.afilias-ops.info
+   - cn2.afilias-ops.info
+
+service_principal: service/admin@AFILIAS.CN
+service_keytab: "{{ vault_service_keytab }}"
+
+# Bash settings
+shell_history_size: 10000
+shell_session_timeout: 14400
+
+# YUM repo
+yum_base_url: http://repo.cn1.afilias-ops.info
+
+# Repo Server
+repo_svr: http://repo.cn1.afilias-ops.info
+
+# Qualy Proxy Server
+qualys_proxy_server: qgproxy1.cn1.afilias-ops.info
+
+# SMTP relay
+smtp_relay_host: 10.115.0.154
+smtp_fallback_relay_host: 10.115.0.155
+
+# SNMP
+snmp_password: "{{ vault_snmp_password }}"
+snmp_syscontact: syseng@afilias.info
+
+# Pandora server
+pandora_svr: cn1
+
+# allowed hosts
+allowed_hosts: 172.16.21.13,10.115.0.72,10.118.0.72,10.115.0.72, 10.115.32.72, 10.115.48.72, 10.115.96.72, 10.100.0.72
+
+# sudo
+default_sudo_specs:
+    - type: permission
+      user: '%syseng'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+    - type: permission
+      user: '%neteng'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+    - type: permission
+      user: '%noc'
+      host: ALL
+      runas: ALL
+      command: '/bin/su - nagios, /bin/su - nocmon, /etc/init.d/nrpe restart,  /etc/init.d/pandora_agent_daemon restart, /usr/bin/pandora_agent, /bin/su - graylog, /sbin/service collector-sidecar restart'
+
+# host members
+default_members:
+    - bkanagar
+    - cchao
+    - fsayed
+    - gopal
+    - gsp
+    - kzhao
+    - mpacyna
+    - parinya
+    - rbhardwa
+    - mweissha
+    - slimba
+    - ksyed
+    - jyeum
+    - atalan
+    - rprasad
+    - kborkako
+
+
+puppet_enabled: false
+puppet2016_enabled: false
+
+iptables_enabled: no
+iptables_rules:
+    - { proto: tcp, dport: 22 }
+
+ip6tables_enabled: no
+ip6tables_rules:
+    - { proto: tcp, dport: 22 }
+
+tcpwrappers_enabled: no
+hosts_allow:
+    - { daemon: ALL, client: '127.0., [::1]' }
+    - { daemon: sshd, client: ALL }
+
+hosts_deny:
+    - { daemon: ALL, client: ALL }
+
+cron_access_enabled: no
+cron_users:
+    - root
+    - nocmon
+
+selinux:
+    state: enforcing
+
+spacewalk_server: spacewalk1.cn1.afilias-ops.info
+
+spacewalk_client_repo: spacewalk-client-china.repo
+
+rhn_cert: "usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT.cn1"
+
+activation_key_centos6: 1-centos6-x86_64-cn1
+
+activation_key_centos7: 1-centos7-x86_64-cn1
+
+hosts_DA_entry: "10.115.32.242   spacewalk1.cn1.afilias-ops.info spacewalk1"
+
+# rsyncs to TSM client
+tsm_backup: true
+rsync_hour: 4
+rsync_minute: "{{ 60 |random(0,5)}}"
+rsync_dirs: "/etc /var/spool/cron /root /opt/home"
+tsm_client: bk1
+
+pv_disk: "/dev/sdb"

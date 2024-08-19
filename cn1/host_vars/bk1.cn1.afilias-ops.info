@@ -1,0 +1,29 @@
+---
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.0.64
+      prefix: 20
+      ipv6: yes
+      gateway: 10.115.0.1
+
+    - id: 1
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.32.64
+      prefix: 20
+      ipv6: yes
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22 }
+    - { proto: tcp, dport: 1500 }
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22 }
+    - { proto: tcp, dport: 1500 }
+

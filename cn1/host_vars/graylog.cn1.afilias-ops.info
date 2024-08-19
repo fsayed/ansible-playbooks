@@ -1,0 +1,67 @@
+---
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.0.129
+      prefix: 20
+      ipv6: yes
+
+    - id: 1
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.100.0.129
+      prefix: 20
+      ipv6: yes
+      gateway: 10.100.0.1
+
+    - id: 2
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.32.129 
+      prefix: 20
+      ipv6: yes
+
+    - id: 3
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.96.129
+      prefix: 20
+      ipv6: yes
+
+    - id: 4
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.48.129
+      prefix: 20
+      ipv6: yes
+
+# sudo
+sudo_specs:
+    - type: permission
+      user: '%noc'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+hosts_deny:
+    - { daemon: ALL, client: ALL }
+
+iptables_enabled: yes
+iptables_rules:
+    - { src: "10.10.24.0/22", proto: tcp, dport: 22, comment: "Allow SSH from Toronto OPS" }
+    - { src: "10.11.216.0/30", proto: tcp, dport: 22, comment: "Allow SSH from USA OPS" }
+    - { src: "10.10.97.0/26", proto: tcp, dport: 22, comment: "Allow SSH from OPS VPN" }
+    - { src: "10.14.24.0/24", proto: tcp, dport: 22, comment: "Allow SSH from AU OPS" }
+    - { src: "10.10.46.0/23", proto: tcp, dport: 22, comment: "Allow SSH from Toronto DBA" }
+    - { src: "10.11.232.0/22", proto: tcp, dport: 22, comment: "Allow SSH from USA DBA" }
+    - { src: "10.10.99.0/25", proto: tcp, dport: 22, comment: "Allow SSH from DBA VPN" }
+    - { src: "10.10.30.0/23", proto: tcp, dport: 22, comment: "Allow SSH from Toronto NOC" }
+    - { src: "10.11.220.0/22", proto: tcp, dport: 22, comment: "Allow SSH from USA NOC" }
+    - { src: "10.10.96.0/25", proto: tcp, dport: 22, comment: "Allow SSH from NOC VPN" }
+      

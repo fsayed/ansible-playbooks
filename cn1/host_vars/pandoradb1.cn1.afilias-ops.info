@@ -1,0 +1,28 @@
+---
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.0.247
+      prefix: 21
+      gateway: 10.115.0.1 
+      ipv6: yes
+
+members:
+    - atalan
+    - joro
+    - jyeum
+    - kborkako
+    - ksyed
+    - mweissha
+    - pdhawan
+    - slimba
+
+sudo_specs:
+    - type: permission
+      user: '%noc'
+      host: ALL
+      runas: ALL
+      command: ALL
+

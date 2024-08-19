@@ -1,0 +1,8 @@
+---
+# product sudo
+product_sudo_specs:
+    - type: permission
+      user: '%mdns_full'
+      host: ALL
+      runas: ALL
+      command: ALL

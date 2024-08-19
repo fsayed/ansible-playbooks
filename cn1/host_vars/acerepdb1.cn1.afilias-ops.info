@@ -1,0 +1,28 @@
+---
+dns_servers:
+    - 10.115.32.60
+    - 10.115.32.61
+ldap_uris:
+    - ldap://ldap1-da.cn1.afilias-ops.info
+    - ldap://ldap2-da.cn1.afilias-ops.info
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.35.75
+      prefix: 20
+      ipv6: yes
+      gateway: 10.115.32.1
+
+    - id: 1
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.100.51.75
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.100.32.0/20
+            gateway: 10.100.48.1
+

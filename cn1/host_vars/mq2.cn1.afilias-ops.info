@@ -1,0 +1,51 @@
+---
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.1.242
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.0.1
+          - network: 172.16.0.0/12
+            gateway: 10.115.0.1
+
+    - id: 1
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.100.1.242
+      prefix: 20
+      ipv6: yes
+      gateway: 10.100.0.5
+
+# sudo
+sudo_specs:
+    - type: permission
+      user: '%syseng'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+    - type: permission
+      user: '%neteng'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+    - type: permission
+      user: '%regops'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+    - type: permission
+      user: '%noc'
+      host: ALL
+      runas: ALL
+      command: '/bin/su - nagios, /etc/init.d/nrpe restart'
+
+rsync_dirs: "/opt/rabbitmq /etc /var/spool/cron /opt/log/rsyncs"

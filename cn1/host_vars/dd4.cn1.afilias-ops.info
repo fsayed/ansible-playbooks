@@ -1,0 +1,50 @@
+---
+vm_name: dd4
+
+num_cpus: 1
+num_cpu_cores_per_socket: 1
+memory_mb: 4096
+cluster: CN1 cluster
+folder: 'CN1 Registry'
+
+disk:
+    - size_gb: 32
+      type: thick
+      datastore: bronzestore2
+
+interfaces:
+    - id: 0
+      name: WebAdmin
+      dns_name: dd4.cn1.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.115.1.248
+      prefix: 20
+      ipv6: yes
+      routes:
+         - network: 10.0.0.0/8
+           gateway: 10.115.0.1
+         - network: 172.16.0.0/12
+           gateway: 10.115.0.1
+
+    - id: 1
+      name: WebResource
+      dns_name: dd4-wr.cn1.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.100.33.248
+      prefix: 20
+      ipv6: yes
+      routes:
+         - network: 10.100.48.0/20
+           gateway: 10.100.32.1
+
+    - id: 2
+      name: Application
+      dns_name: dd4-ap.cn1.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.100.1.248
+      prefix: 20
+      ipv6: yes
+      gateway: 10.100.0.1

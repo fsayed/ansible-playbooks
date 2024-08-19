@@ -1,0 +1,43 @@
+---
+vm_name: chnredis3
+num_cpus: 1
+num_cpu_cores_per_socket: 1
+memory_mb: 1024
+cluster: CN1 cluster
+folder: CN1 DB Application
+template: centos-7-x86_64-template
+
+disk:
+    - size_gb: 32
+      type: thick
+      datastore: silverstore1
+    - size_gb: 50
+      type: thick
+      datastore: silverstore1
+
+interfaces:
+    - id: 0
+      name: DataAdmin
+      dns_name: chnredis3.cn1.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.115.32.111
+      prefix: 20
+      gateway: 10.115.32.1 
+      ipv6: yes
+
+    - id: 1
+      name: DataResource
+      dns_name: chnredis3-dr.svc.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.100.48.183
+      prefix: 20
+      routes:
+          - network: 10.100.32.0/20
+            gateway: 10.100.48.1
+      ipv6: yes
+
+pv_disk: "/dev/sdb"
+
+

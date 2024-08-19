@@ -1,0 +1,47 @@
+---
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.1.4
+      prefix: 20
+      ipv6: yes
+      routes:
+         - network: 10.0.0.0/8
+           gateway: 10.115.0.1
+         - network: 172.16.0.0/12
+           gateway: 10.115.0.1
+
+    - id: 1
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.100.33.4
+      prefix: 20
+      ipv6: yes
+      routes:
+         - network: 10.100.48.0/20
+           gateway: 10.100.32.1
+
+    - id: 2
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.100.1.4
+      prefix: 20
+      ipv6: yes
+      gateway: 10.100.0.1
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: [9319,9419], comment: "dns distributor" }
+    - { proto: udp, dport: "9319:65535", comment: "Random port on DNS" }
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: [9319,9419], comment: "dns distributor" }
+    - { proto: udp, dport: "9319:65535", comment: "Random port on DNS" }
+

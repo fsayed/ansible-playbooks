@@ -1,0 +1,43 @@
+---
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.3.32
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.0.1
+          - network: 172.16.0.0/12
+            gateway: 10.115.0.1
+
+    - id: 1
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.100.35.32
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.100.48.0/20
+            gateway: 10.100.32.1
+
+    - id: 2
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.100.3.32
+      prefix: 20
+      gateway: 10.100.0.5
+      ipv6: yes
+      ip6: 2001:250:222:a::3:32/64 
+      gateway6: 2001:250:222:a::5
+      routes:
+          - network: 10.100.16.0/20
+            gateway: 10.100.0.5
+
+graylog_sidecar: yes
+graylog_api_url: https://logelk1.cn1.afilias-ops.info:9000/api/
+graylog_server_api_token: kfokjtpk8r4dnhtab15j9e909hqq5vm86h844ps40so76vldafe

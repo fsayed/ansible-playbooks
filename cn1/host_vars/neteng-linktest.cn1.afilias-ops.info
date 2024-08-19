@@ -1,0 +1,47 @@
+---
+vm_name: neteng-linktest
+
+num_cpus: 1
+num_cpu_cores_per_socket: 1
+memory_mb: 4096
+folder: 'CN1 Infrastructure'
+template: centos-7.7-x86_64-template
+
+disk:
+    - size_gb: 32
+      type: thick
+      datastore: bronzestore2
+
+interfaces:
+    - id: 0
+      name: WebAdmin
+      dns_name: neteng-linktest.cn1.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.115.8.110
+      prefix: 20
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.0.1
+      ipv6: yes
+
+    - id: 4
+      name: Application
+      dns_name: neteng-linktest-ap.svc.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.100.8.110
+      prefix: 20
+      gateway: 10.100.0.1
+      ipv6: yes
+
+
+tcpwrappers_enabled: no
+
+selinux:
+    state: enforcing
+
+iptables_enabled: no
+
+cluster: 'CN1 cluster'
+

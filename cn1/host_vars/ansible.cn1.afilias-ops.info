@@ -1,0 +1,45 @@
+---
+vm_name: ansible
+
+num_cpus: 1
+num_cpu_cores_per_socket: 1
+memory_mb: 1024
+cluster: CN1 cluster
+folder: 'CN1 Infrastructure'
+
+disk:
+    - size_gb: 32
+      type: thick
+      datastore: silverstore1
+
+interfaces:
+    - id: 0
+      name: WebAdmin
+      bootproto: none
+      onboot: yes
+      dns_name: ansible.cn1.afilias-ops.info
+      ip: 10.115.0.55
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.0.1
+
+    - id: 1
+      name: DataAdmin
+      bootproto: none
+      onboot: yes
+      dns_name: ansible-da.cn1.afilias-ops.info
+      ip: 10.115.32.55
+      prefix: 20
+      ipv6: yes
+
+    - id: 2
+      name: Application
+      bootproto: none
+      onboot: yes
+      ip: 10.100.0.55
+      prefix: 20
+      ipv6: yes
+      gateway: 10.100.0.1
+

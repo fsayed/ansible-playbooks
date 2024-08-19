@@ -1,0 +1,70 @@
+---
+vm_name: cnwhois2
+
+num_cpus: 1
+num_cpu_cores_per_socket: 1
+memory_mb: 4096
+cluster: 'CN1 cluster'
+folder: 'CN1 Registry'
+template: centos-7-x86_64-template
+
+disk:
+    - size_gb: 32
+      type: thick
+      datastore: silverstore1
+
+interfaces:
+    - id: 0
+      name: 'WebAdmin'
+      dns_name: cnwhois2.cn1.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.115.3.16
+      prefix: 20
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.0.1
+          - network: 172.16.23.0/24
+            gateway: 10.115.0.1
+      ipv6: yes
+
+    - id: 1
+      name: 'WebResource'
+      dns_name: cnwhois2-wr.svc.afilias-ops.info 
+      bootproto: none
+      onboot: yes
+      ip: 10.100.35.16
+      prefix: 20
+      routes:
+          - network: 10.100.48.0/20
+            gateway: 10.100.32.1
+      ipv6: yes
+
+    - id: 2
+      name: 'Application'
+      dns_name: cnwhois2-ap.svc.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.100.3.16
+      prefix: 20
+      gateway: 10.100.0.5
+      routes:
+          - network: 10.100.16.0/20
+            gateway: 10.100.0.5
+      ipv6: yes
+      ip6: 2001:250:222:a::3:16/64 
+      gateway6: 2001:250:222:a::5
+
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22 }
+    - { proto: tcp, dport: 40043 }
+    - { proto: tcp, dport: 8080 }
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22 }
+    - { proto: tcp, dport: 40043 }
+    - { proto: tcp, dport: 8080 }
+

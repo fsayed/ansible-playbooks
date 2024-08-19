@@ -1,0 +1,75 @@
+---
+
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.2.151
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.0.1
+          - network: 172.16.0.0/12
+            gateway: 10.115.0.1
+
+    - id: 1
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.34.151
+      prefix: 20
+      ipv6: yes
+
+    - id: 2
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.100.2.151
+      prefix: 20
+      ipv6: yes
+      gateway: 10.100.0.1
+
+# sudo
+sudo_specs:
+    - type: permission
+      user: '%regops'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+product_sudo_specs:
+    - type: permission
+      user: '%regmgmt_full'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+sshd_config: 
+    LogLevel: VERBOSE
+    MaxAuthTries: 4
+    LoginGraceTime: 60
+    ClientAliveInterval: 300
+    ClientAliveCountMax: 0
+    AuthorizedKeysFile: /etc/ssh/keys/%u/authorized_keys
+    Match:
+         - rule: User mrepo Address 10.10.32.155/32
+           config:
+               - "{{ 'RequiredAuthentications2 publickey' if ansible_distribution_major_version|int <= 6 else 'AuthenticationMethods publickey' }}"
+
+iptables_enabled: no
+ip6tables_enabled: no
+
+members:
+    - cpan
+    - mrunciem
+    - swang
+    - jpilay
+    - sue
+    - sshah
+    - sgrover
+    - ihickman
+    - prybak
+    - zskalski
+

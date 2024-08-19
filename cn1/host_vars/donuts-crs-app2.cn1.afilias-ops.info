@@ -1,0 +1,48 @@
+---
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.3.83
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.0.1
+          - network: 172.16.0.0/12
+            gateway: 10.115.0.1
+
+    - id: 1
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.100.35.83
+      ipv6: yes
+      prefix: 20
+      routes:
+          - network: 10.100.48.0/20
+            gateway: 10.100.32.1
+
+    - id: 2
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.100.3.83
+      prefix: 20
+      gateway: 10.100.0.5
+      ipv6: yes
+      ip6: 2001:250:222:a::3:83/64
+      gateway6: 2001:250:222:a::5
+      routes:
+          - network: 10.100.16.0/20
+            gateway: 10.100.0.5
+
+# sudo
+sudo_specs:
+    - type: permission
+      user: '%noc'
+      host: ALL
+      runas: afiliasepp
+      command: /opt/home/afiliasepp/restart_crsepp.sh
+

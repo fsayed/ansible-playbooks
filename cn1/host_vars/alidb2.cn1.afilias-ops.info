@@ -1,0 +1,51 @@
+---
+vm_name: alidb2
+
+num_cpus: 2
+num_cpu_cores_per_socket: 1
+memory_mb: 8192
+cluster: CN1 cluster
+folder: 'CN1 Registry'
+pv_disk: "/dev/sdb"
+
+disk:
+    - size_gb: 32
+      type: thick
+      datastore: bronzestore2
+    - size_gb: 50
+      type: thick
+      datastore: silverstore2
+
+interfaces:
+    - id: 0
+      name: DataAdmin
+      dns_name: alidb2.cn1.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.115.35.31
+      prefix: 20
+      ipv6: yes
+      gateway: 10.115.32.1
+      ip6: 2001:250:222:a3::35:31/64
+      routes6:
+          - network: 2001:1978:801::0/48
+            gateway: 2001:250:222:a3::1
+          - network: 2001:1900:2262::0/48
+            gateway: 2001:250:222:a3::1
+          - network: 2001:500:109::0/48
+            gateway: 2001:250:222:a3::1
+          - network: 2001:250:222:b3::0/64
+            gateway: 2001:250:222:a3::1
+
+    - id: 1
+      name: DataResource
+      dns_name: alidb2-dr.svc.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.100.51.31
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.100.32.0/20
+            gateway: 10.100.48.1
+

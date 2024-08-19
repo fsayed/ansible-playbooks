@@ -1,0 +1,25 @@
+---
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.0.77
+      prefix: 20
+      ipv6: yes
+      gateway: 10.115.0.1
+
+# sudo
+sudo_specs:
+    - type: permission
+      user: '%regops'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+members:
+    - fmosavat
+    - jpfletch
+    - rbigelow
+
+rsync_dirs: "/opt/puppet /var/opt /etc /var/spool/cron /opt/log/rsyncs"

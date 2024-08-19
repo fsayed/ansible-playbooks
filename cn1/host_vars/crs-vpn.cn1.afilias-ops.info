@@ -1,0 +1,18 @@
+---
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.112.4 
+      prefix: 24
+      gateway: 10.115.112.1 
+      ipv6: yes
+
+    - id: 1
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 192.168.134.1
+      prefix: 24
+      ipv6: yes

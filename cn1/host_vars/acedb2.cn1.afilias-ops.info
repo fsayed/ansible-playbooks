@@ -1,0 +1,52 @@
+---
+dns_servers:
+    - 10.115.32.60
+    - 10.115.32.61
+ldap_uris:
+    - ldap://ldap1-da.cn1.afilias-ops.info
+    - ldap://ldap2-da.cn1.afilias-ops.info
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.35.71
+      prefix: 20
+      ipv6: yes
+      gateway: 10.115.32.1
+
+    - id: 1
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.100.51.71
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.100.32.0/20
+            gateway: 10.100.48.1
+
+local_users:
+    - username: ewang
+      uid: 10099
+      password: '$6$zMK.j12U$fDW.ssTEMnJwfre3dR79y4IpUgYMiMvf1njSNGTccG77sqJwEcCelw5KWbrxeNVvlCTSkl0vjosFOzvf/L9b9.'
+      group: users
+      comment: Eric Wang
+      shell: /bin/bash
+      state: present
+
+    - username: hzhou
+      uid: 10100
+      password: '$6$b.tkPocM2/SRAql0$BNAobqjfBymjfeJOpNHjFG0jWwYjfoYN8.oRNJD6Bp0ztsn8lfwDGdG6domVqs8cZIELIa58ykloyFQfjzYEr0'
+      group: users
+      comment: Helena Zhou
+      shell: /bin/bash
+      state: present
+
+    - username: dsu
+      uid: 10101
+      password: '$6$PGXioWOfNe8vLUmn$qnAiM6dXOnkt/I8NsRm1ROGgXbhVREwXvnwXeCgA6.VQrVM4DTVLpcH92weMWNqRdi.ZUg5xYnQMvMTDpg6Ej0'
+      group: users
+      comment: David Su
+      shell: /bin/bash
+      state: present

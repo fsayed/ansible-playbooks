@@ -1,0 +1,37 @@
+---
+
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.0.103
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.0.1
+
+    - id: 1
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.32.103
+      prefix: 20
+      ipv6: yes
+
+    - id: 2
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.100.2.103
+      prefix: 20
+      gateway: 10.100.0.1
+      ipv6: yes
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22 }
+    - { src: "10.115.0.0/20", proto: tcp, dport: 31280, comment: "WebAdmin" }
+    - { src: "10.115.32.0/20", proto: tcp, dport: 31280, comment: "DataAdmin" }
+    - { src: "10.115.48.0/20", proto: tcp, dport: 31280, comment: "Hardware" }

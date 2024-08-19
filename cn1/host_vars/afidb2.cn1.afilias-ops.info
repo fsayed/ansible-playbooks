@@ -1,0 +1,41 @@
+---
+vm_name: afidb2
+
+num_cpus: 2
+num_cpu_cores_per_socket: 1
+memory_mb: 4096
+cluster: CN1 cluster
+folder: 'CN1 Registry'
+
+disk:
+    - size_gb: 32
+      type: thick
+      datastore: bronzestore2
+    - size_gb: 20
+      type: thick
+      datastore: silverstore2
+
+interfaces:
+    - id: 0
+      name: DataAdmin
+      bootproto: none
+      onboot: yes
+      ip: 10.115.35.61
+      prefix: 20
+      dns_name: afidb2.cn1.afilias-ops.info
+      ipv6: yes
+      gateway: 10.115.32.1
+
+    - id: 1
+      name: DataResource
+      bootproto: none
+      onboot: yes
+      ip: 10.100.51.61
+      prefix: 20
+      dns_name: afidb2-dr.svc.afilias-ops.info
+      ipv6: yes
+      routes:
+          - network: 10.100.32.0/20
+            gateway: 10.100.48.1
+
+pv_disk: "/dev/sdb"

@@ -1,0 +1,81 @@
+---
+vm_name: nocping2
+
+num_cpus: 2
+num_cpu_cores_per_socket: 1
+memory_mb: 4096
+cluster: CN1 cluster
+folder: 'CN1 NOC'
+
+disk:
+    - size_gb: 32
+      type: thick
+      datastore: bronzestore2
+    - size_gb: 50
+      type: thick
+      datastore: bronzestore2
+
+interfaces:
+    - id: 0
+      name: WebAdmin
+      dns_name: nocping2.cn1.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.115.0.169
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.0.1
+          - network: 172.16.0.0/12
+            gateway: 10.115.0.1
+
+    - id: 1
+      name: WebResource
+      dns_name: nocping2-wr.svc.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.100.32.169
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.100.48.0/20
+            gateway: 10.100.32.1
+
+    - id: 2
+      name: Application
+      dns_name: nocping2-ap.svc.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.100.0.169
+      prefix: 20
+      ipv6: yes
+      gateway: 10.100.0.1
+
+    - id: 3
+      name: F5
+      dns_name: nocping2-f5.svc.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.100.16.169
+      prefix: 20
+      ipv6: yes
+   
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+
+
+# sudo
+sudo_specs:
+    - type: permission
+      user: '%noc'
+      host: ALL
+      runas: ALL
+      command: ALL
+

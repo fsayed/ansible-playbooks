@@ -1,0 +1,28 @@
+---
+dns_servers:
+    - 10.115.32.60
+    - 10.115.32.61
+ldap_uris:
+    - ldap://ldap1-da.cn1.afilias-ops.info
+    - ldap://ldap2-da.cn1.afilias-ops.info
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.32.92
+      prefix: 20
+      ipv6: yes
+      gateway: 10.115.32.1
+      ip6: 2001:250:222:a3::32:92/64
+      routes6:
+          - network: 2001:1978:801::0/48
+            gateway: 2001:250:222:a3::1
+          - network: 2001:1900:2262::0/48
+            gateway: 2001:250:222:a3::1
+          - network: 2001:500:109::0/48
+            gateway: 2001:250:222:a3::1
+          - network: 2001:250:222:b3::0/64
+            gateway: 2001:250:222:a3::1
+
+rsync_dirs: "/opt/escrow1 /etc /var/spool/cron /opt/log/rsyncs"

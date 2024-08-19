@@ -1,0 +1,104 @@
+---
+dns_servers:
+   - 10.115.0.155
+   - 10.115.0.154
+
+ldap_uris:
+   - ldap://ldap3.cn1.afilias-ops.info
+   - ldap://ldap4.cn1.afilias-ops.info
+
+krb5_kdcs:
+   - ops3.cn1.afilias-ops.info
+   - ops4.cn1.afilias-ops.info
+
+sudo_specs:
+    - type: permission
+      user: '%supportops'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.0.155
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.0.1
+          - network: 172.16.0.0/12
+            gateway: 10.115.0.1
+
+    - id: 1
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.32.155
+      prefix: 20
+      ipv6: yes
+
+    - id: 2
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.48.155
+      prefix: 20
+      ipv6: yes
+
+    - id: 3
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.96.155
+      prefix: 20
+      ipv6: yes
+
+    - id: 4
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.100.0.155
+      prefix: 20
+      ipv6: yes
+      gateway: 10.100.0.1
+
+sshd_config: 
+    LogLevel: VERBOSE
+    MaxAuthTries: 4
+    LoginGraceTime: 60
+    ClientAliveInterval: 300
+    ClientAliveCountMax: 0
+    AuthorizedKeysFile: /etc/ssh/keys/%u/authorized_keys
+    Match:
+         - rule: User dnssync Address 10.10.32.17/32
+           config:
+               - "{{ 'RequiredAuthentications2 publickey' if ansible_distribution_major_version|int <= 6 else 'AuthenticationMethods publickey' }}"
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22 }
+    - { proto: tcp, dport: 25 }
+    - { proto: tcp, dport: 53 }
+    - { proto: udp, dport: 53 }
+    - { proto: tcp, dport: 88 }
+    - { proto: udp, dport: 88 }
+    - { proto: udp, dport: 123 }
+    - { proto: tcp, dport: 389 }
+    - { proto: tcp, dport: 636 }
+    - { proto: tcp, dport: 754 }
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22 }
+    - { proto: tcp, dport: 25 }
+    - { proto: tcp, dport: 53 }
+    - { proto: udp, dport: 53 }
+    - { proto: tcp, dport: 88 }
+    - { proto: udp, dport: 88 }
+    - { proto: tcp, dport: 389 }
+    - { proto: tcp, dport: 636 }
+    - { proto: tcp, dport: 754 }
+  

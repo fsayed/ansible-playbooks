@@ -1,0 +1,21 @@
+---
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.33.13
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.32.1
+          - network: 172.16.0.0/12
+            gateway: 10.115.32.1
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: 46000, comment: "LB" }
+
+

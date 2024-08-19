@@ -1,0 +1,11 @@
+---
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.96.246
+      prefix: 20
+      ipv6: yes
+
+

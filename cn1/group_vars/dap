@@ -1,0 +1,94 @@
+---
+dns_servers:
+   - 10.115.32.155
+   - 10.115.32.154
+
+ntp_servers:
+   - 10.115.32.155
+   - 10.115.32.154
+
+#LDAP
+ldap_master: ldap3-da.cn1.afilias-ops.info
+
+ldap_uris:
+   - ldap://ldap3-da.cn1.afilias-ops.info
+   - ldap://ldap4-da.cn1.afilias-ops.info
+
+#Kerberos
+krb5_admin_server: kerberos-da.cn1.afilias-ops.info
+krb5_kdcs:
+   - ops3-da.cn1.afilias-ops.info
+   - ops4-da.cn1.afilias-ops.info
+
+# YUM repo
+yum_base_url: http://repo-da.cn1.afilias-ops.info
+
+# Repo Server
+repo_svr: http://repo-da.cn1.afilias-ops.info
+
+# Qualy Proxy Server
+qualys_proxy_server: qgproxy1-da.cn1.afilias-ops.info
+
+# SMTP relay
+smtp_relay_host: 10.115.32.155
+smtp_fallback_relay_host: 10.115.32.154
+
+# sudo
+default_sudo_specs:
+    - type: permission
+      user: '%syseng'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+    - type: permission
+      user: '%neteng'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+    - type: permission
+      user: '%noc'
+      host: ALL
+      runas: ALL
+      command: '/bin/su - nagios, /bin/su - nocmon,   /etc/init.d/nrpe restart, /etc/init.d/pandora_agent_daemon restart, /usr/bin/pandora_agent'
+
+    - type: alias
+      alias_type: Cmnd_Alias
+      name: DBA_CMND_ANSIBLE
+      value: '/bin/su - postgres, /usr/local/bin/puppet, /opt/puppet/bin/puppet'
+
+    - type: permission
+      user: '%dba'
+      command: DBA_CMND_ANSIBLE
+
+puppet2016_enabled: true
+
+pandora_svr: cn1da
+
+# host members
+default_members:
+    - bkanagar
+    - cchao
+    - fsayed
+    - gopal
+    - gsp
+    - kzhao
+    - mpacyna
+    - parinya
+    - rbhardwa
+    - mweissha
+    - slimba
+    - ksyed
+    - jyeum
+    - atalan
+    - kpatel
+    - prybak
+    - ajunea
+    - esadlon
+    - zskalski
+    - rprasad
+    - kborkako
+
+    
+tsm_client: bk1-da

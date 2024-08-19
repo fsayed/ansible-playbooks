@@ -1,0 +1,39 @@
+---
+vm_name: dap4
+
+num_cpus: 1
+num_cpu_cores_per_socket: 1
+memory_mb: 8192
+cluster: CN1 cluster
+folder: 'CN1 DB Application'
+
+disk:
+    - size_gb: 32
+      type: thick
+      datastore: bronzestore2
+    - size_gb: 150
+      type: thick
+      datastore: silverstore2
+
+interfaces:
+    - id: 0
+      name: DataAdmin
+      bootproto: none
+      onboot: yes
+      ip: 10.115.32.96
+      prefix: 20
+      dns_name: dap4.cn1.afilias-ops.info
+      ipv6: yes
+      gateway: 10.115.32.1
+      ip6: 2001:250:222:a3::32:96/64
+      routes6:
+          - network: 2001:1978:801::0/48
+            gateway: 2001:250:222:a3::1
+          - network: 2001:1900:2262::0/48
+            gateway: 2001:250:222:a3::1
+          - network: 2001:500:109::0/48
+            gateway: 2001:250:222:a3::1
+          - network: 2001:250:222:b3::0/64
+            gateway: 2001:250:222:a3::1
+
+rsync_dirs: "/opt/escrow1 /etc /var/spool/cron /opt/log/rsyncs"

@@ -1,0 +1,67 @@
+---
+vm_name: mq3
+
+num_cpus: 2
+num_cpu_cores_per_socket: 1
+memory_mb: 4096
+cluster: CN1 cluster
+folder: 'CN1 Registry'
+
+disk:
+    - size_gb: 32
+      type: thick
+      datastore: bronzestore1
+
+interfaces:
+    - id: 0
+      name: WebAdmin
+      bootproto: none
+      onboot: yes
+      ip: 10.115.1.238
+      prefix: 20
+      dns_name: mq3.cn1.afilias-ops.info
+      ipv6: yes
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.0.1
+          - network: 172.16.0.0/12
+            gateway: 10.115.0.1
+
+    - id: 1
+      name: Application
+      bootproto: none
+      onboot: yes
+      ip: 10.100.1.238
+      prefix: 20
+      dns_name: mq3-ap.svc.afilias-ops.info
+      ipv6: yes
+      gateway: 10.100.0.5
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: 1883, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 4369, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 5601, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 5603, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 5671, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 5672, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 8883, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 15672, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 25672, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 61613, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 61614, comment: "RabbitMQ" }
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: 1883, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 4369, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 5671, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 5672, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 8883, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 15672, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 25672, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 61613, comment: "RabbitMQ" }
+    - { proto: tcp, dport: 61614, comment: "RabbitMQ" }
+

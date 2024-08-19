@@ -1,0 +1,37 @@
+---
+vm_name: jumpbox1
+num_cpus: 2
+num_cpu_cores_per_socket: 1
+memory_mb: 2048
+cluster: CN1 cluster
+folder: CN1 App Generic
+template: centos-7-x86_64-template
+
+disk:
+    - size_gb: 32
+      type: thick
+      datastore: bronzestore1
+
+interfaces:
+    - id: 0
+      name: WebAdmin
+      bootproto: none
+      onboot: yes
+      ip: 10.115.8.70
+      prefix: 20
+      dns_name: jumpbox1.cn1.afilias-ops.info
+      ipv6: yes
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.0.1
+
+    - id: 1
+      name: Application
+      bootproto: none
+      onboot: yes
+      ip: 10.100.8.70
+      prefix: 20
+      dns_name: jumpbox1-ap.svc.afilias-ops.info
+      ipv6: yes
+      gateway: 10.100.0.1
+

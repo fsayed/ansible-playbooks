@@ -1,0 +1,14 @@
+---
+# product sudo
+product_sudo_specs:
+    - type: permission
+      user: '%regpub_full'
+      host: ALL
+      runas: ALL
+      command: ALL
+    - type: permission
+      user: '%regmgmt_full'
+      host: ALL
+      runas: ALL
+      command: ALL
+

@@ -1,0 +1,75 @@
+---
+vm_name: nocprom1
+num_cpus: 2
+num_cpu_cores_per_socket: 1
+memory_mb: 4096
+cluster: CN1 cluster
+folder: CN1 App Generic
+template: centos-7-x86_64-template
+
+disk:
+    - size_gb: 32
+      type: thick
+      datastore: bronzestore1
+
+    - size_gb: 50
+      type: thick
+      datastore: bronzestore1
+
+
+interfaces:
+    - id: 0
+      name: WebAdmin
+      bootproto: none
+      onboot: yes
+      ip: 10.115.0.248
+      prefix: 20
+      dns_name: nocprom1.cn1.afilias-ops.info
+      ipv6: yes
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.0.1
+
+    - id: 1
+      name: DataAdmin
+      bootproto: none
+      onboot: yes
+      ip: 10.115.32.248
+      prefix: 20
+      dns_name: nocprom1-da.cn1.afilias-ops.info
+      ipv6: yes
+
+    - id: 2
+      name: Application
+      bootproto: none
+      onboot: yes
+      ip: 10.100.0.248
+      prefix: 20
+      dns_name: nocprom1-ap.svc.afilias-ops.info
+      ipv6: yes
+      gateway: 10.100.0.1
+      ip6: 2001:250:222:a::248/64
+      gateway6: 2001:250:222:a::1
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: 443, comment: "Allow HTTPS" }
+    - { proto: tcp, dport: 9090 }
+    - { proto: tcp, dport: 9093 }
+
+ip6tables_enabled: yes
+ip6tables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: 443, comment: "Allow HTTPS" }
+    - { proto: tcp, dport: 9090 }
+    - { proto: tcp, dport: 9093 }
+
+# sudo
+sudo_specs:
+    - type: permission
+      user: '%noc'
+      host: ALL
+      runas: ALL
+      command: ALL
+

@@ -1,0 +1,46 @@
+---
+interfaces:
+    - id: 0
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.115.2.146
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.0.1
+          - network: 172.16.0.0/12
+            gateway: 10.115.0.1
+
+    - id: 1
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.100.34.146
+      prefix: 20
+      ipv6: yes
+      routes:
+          - network: 10.100.48.0/20
+            gateway: 10.100.32.1
+
+    - id: 2
+      type: Ethernet
+      bootproto: none
+      onboot: yes
+      ip: 10.100.2.146
+      prefix: 20
+      gateway: 10.100.0.5
+      ipv6: yes
+      ip6: 2001:250:222:a::2:146/64 
+      gateway6: 2001:250:222:a::5
+      routes:
+          - network: 10.100.16.0/20
+            gateway: 10.100.0.5
+
+iptables_enabled: yes
+iptables_rules:
+    - { proto: tcp, dport: 22, comment: "Allow SSH" }
+    - { proto: tcp, dport: 46000, comment: "LB" }
+
+rsync_dirs: "/opt /etc /var/spool/cron /opt/log/rsyncs"

@@ -1,0 +1,104 @@
+---
+vm_name: lenode1
+
+num_cpus: 4
+num_cpu_cores_per_socket: 1
+memory_mb: 8192
+folder: 'CN1 Infrastructure'
+
+disk:
+    - size_gb: 32
+      type: thick
+      datastore: bronzestore1
+    - size_gb: 250
+      type: thick
+      datastore: bronzestore1
+
+interfaces:
+    - id: 0
+      name: WebAdmin
+      dns_name: lenode1.cn1.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.115.0.151
+      prefix: 20
+      routes:
+          - network: 10.0.0.0/8
+            gateway: 10.115.0.1
+      ipv6: yes
+
+    - id: 1
+      name: DataAdmin
+      dns_name: lenode1-da.cn1.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.115.32.151
+      prefix: 20
+      ipv6: yes
+
+    - id: 2
+      name: Hardware
+      dns_name: lenode1-hw.cn1.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.115.48.151
+      prefix: 20
+      ipv6: yes
+
+    - id: 3
+      name: "VMware Management"
+      dns_name: lenode1-vmware.cn1.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.115.96.151
+      prefix: 20
+      ipv6: yes
+
+    - id: 4
+      name: Application
+      dns_name: lenode1-ap.svc.afilias-ops.info
+      bootproto: none
+      onboot: yes
+      ip: 10.100.0.151
+      prefix: 20
+      gateway: 10.100.0.1
+      ipv6: yes
+
+
+# sudo
+sudo_specs:
+    - type: permission
+      user: '%noc'
+      host: ALL
+      runas: ALL
+      command: ALL
+
+
+tcpwrappers_enabled: yes
+hosts_allow:
+    - { daemon: ALL, client: '127.0., [::1]' }
+    - { daemon: sshd, client: '10.10.24.0/22, 10.11.216.0/30, 10.10.97.0/26, 10.14.24.0/24, 10.10.46.0/23, 10.11.232.0/22, 10.10.99.0/25, 10.10.30.0/23, 10.11.220.0/22, 10.10.96.0/25' }
+
+hosts_deny:
+    - { daemon: ALL, client: ALL }
+
+selinux:
+    state: enforcing
+
+iptables_enabled: yes
+iptables_rules:
+    - { src: "10.10.24.0/22", proto: tcp, dport: 22, comment: "Allow SSH from Toronto OPS" }
+    - { src: "10.11.216.0/30", proto: tcp, dport: 22, comment: "Allow SSH from USA OPS" }
+    - { src: "10.10.97.0/26", proto: tcp, dport: 22, comment: "Allow SSH from OPS VPN" }
+    - { src: "10.14.24.0/24", proto: tcp, dport: 22, comment: "Allow SSH from AU OPS" }
+    - { src: "10.10.46.0/23", proto: tcp, dport: 22, comment: "Allow SSH from Toronto DBA" }
+    - { src: "10.11.232.0/22", proto: tcp, dport: 22, comment: "Allow SSH from USA DBA" }
+    - { src: "10.10.99.0/25", proto: tcp, dport: 22, comment: "Allow SSH from DBA VPN" }
+    - { src: "10.10.30.0/23", proto: tcp, dport: 22, comment: "Allow SSH from Toronto NOC" }
+    - { src: "10.11.220.0/22", proto: tcp, dport: 22, comment: "Allow SSH from USA NOC" }
+    - { src: "10.10.96.0/25", proto: tcp, dport: 22, comment: "Allow SSH from NOC VPN" }
+    - { src: "10.0.0.0/8", proto: tcp, dport: 9200, comment: "elasticsearch" }
+    - { src: "10.0.0.0/8", proto: tcp, dport: 9300, comment: "elasticsearch" }
+
+cluster: 'CN1 cluster'
+
